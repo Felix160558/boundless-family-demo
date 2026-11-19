@@ -12,3 +12,56 @@ dialog{max-width:calc(100% - 32px);max-height:calc(100svh - 40px);padding:36px;b
 @media(max-width:1000px){.topbar{gap:18px;padding-inline:25px}.location-label{display:none}.arrival{padding:25px 35px;gap:25px}.welcome h1{font-size:48px}.welcome-copy{font-size:14px}.appointment-summary{width:320px;padding:22px}.lounge-footer{padding-inline:35px}.top-actions>*{font-size:13px}}
 @media(max-width:680px){.topbar{height:88px;padding:14px 20px;gap:10px}.isp-brand img{width:122px}.top-actions{gap:6px}.top-actions>*{padding:9px 10px;font-size:12px}.top-actions #center-view{display:none}.arrival{inset:88px 0 44px;padding:24px;display:block;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}.welcome{position:absolute;bottom:22px;left:24px;right:24px}.welcome .eyebrow{font-size:10px;margin-bottom:10px}.welcome h1{font-size:40px;margin-bottom:15px}.welcome-copy{font-size:14px;line-height:1.8}.welcome-actions{gap:18px;margin-top:21px}.welcome-actions .primary{font-size:14px;padding:11px 15px}.quiet-link{font-size:13px}.room-hint{font-size:11px;margin-top:14px}.lounge-footer{height:44px;padding:0 24px;font-size:10px}.lounge-footer span:last-child{display:none}.appointment-summary{position:relative;width:100%;margin-top:34vh;padding:21px;margin-bottom:8px}body.has-appointment .welcome{position:relative;bottom:auto;left:auto;right:auto;margin-top:15vh}body.has-appointment .welcome h1{font-size:31px}body.has-appointment .welcome-copy,body.has-appointment .welcome .eyebrow,body.has-appointment .room-hint{display:none}body.has-appointment .appointment-summary{margin-top:25px}.portrait-hotspot>span{font-size:12px;padding:5px 8px;bottom:-33px}.portrait-hotspot small{font-size:10px;margin-top:3px}body:not([data-lounge-ready="true"]) .portrait-gallery{top:20%;left:18%;right:18%;width:auto;height:25%;gap:12px}body:not([data-lounge-ready="true"]) .portrait-hotspot{border-width:4px}.teacher-dialog{padding:32px 24px;max-height:calc(100svh - 26px)}.profile-layout{grid-template-columns:94px 1fr;gap:20px}.teacher-profile h2{font-size:27px}.teacher-profile .eyebrow{font-size:9px;letter-spacing:.07em}.teacher-specialty{font-size:12px}.teacher-description{font-size:14px;line-height:1.75}.teacher-focus{grid-column:1/-1}.teacher-focus li{font-size:12px}.demo-label{font-size:10px}.slot-options{grid-template-columns:repeat(2,1fr)}.booking-form legend span{display:block;margin:4px 0 0}.booking-bottom{display:block}.booking-bottom button{width:100%;margin-top:15px}.small-dialog{padding:34px 25px}.arrival::before{inset:38% 0 -46px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+/* Preserve the original Common Room framing and quiet interface. */
+:root{--ink:#eeece5;--muted:#a6a9b1;--line:#eee9db24;font-family:system-ui,sans-serif}
+.topbar{height:72px;padding:0 max(4vw,20px);gap:18px;background:linear-gradient(#130e09b0,transparent)}
+.brand{margin-right:auto;display:inline-flex;align-items:center;gap:12px;font-size:10px;letter-spacing:.22em;color:#e7dbc7}
+.brand small{display:block;margin-top:5px;font-size:7px;letter-spacing:.37em}
+.brand-mark{font:36px/.8 Georgia,serif;transform:rotate(-17deg)}
+.location-label{font-size:9px;letter-spacing:.22em;color:#c6b696}
+.top-actions{margin-left:0;gap:10px}
+.top-actions>*{font-size:11px;padding:9px 12px;border-color:#e0c69930;background:#32291c26;color:#e4d5bd}
+.top-actions #center-view{font-size:11px;padding:8px;color:#d7cebc}
+.arrival{inset:72px 0 46px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-content:end;align-items:end;gap:0 42px;padding:35px clamp(26px,5vw,90px) clamp(28px,6svh,64px)}
+.arrival::before{inset:45% 0 -46px;background:linear-gradient(0deg,#100d0bf0,#100d0b69 43%,transparent 91%)}
+.welcome{display:contents}
+.welcome>.eyebrow,.welcome-copy{display:none}
+.welcome h1{grid-column:1;grid-row:1;margin:0;color:#f5ebd9;font-family:Baskerville,Georgia,serif;font-size:clamp(46px,5vw,76px);font-weight:400;line-height:1.02;letter-spacing:-.035em;text-shadow:0 3px 28px #150d0780}
+.welcome h1 em{font-style:italic;font-weight:400;color:#dcc39c}
+.welcome-actions{grid-column:2;grid-row:1;justify-self:end;flex-wrap:wrap;gap:8px;margin:0;padding-bottom:5px}
+.welcome-actions>*{min-height:44px;padding:12px 20px;border-radius:3px;border:1px solid #eadbc335;background:#29241d60;color:#ece1cd;font-size:12px;letter-spacing:.015em;white-space:nowrap;backdrop-filter:blur(4px)}
+.welcome-actions .primary{color:#2a2218;background:#e1ccb0;border-color:#e1ccb0}
+.welcome-actions>*:hover{border-color:#f2e6c67a;background:#55493680}
+.welcome-actions .primary:hover{color:#181b20;background:#f2e8d7}
+.room-hint{grid-column:1/-1;grid-row:3;margin:23px 0 0;font-size:10px;letter-spacing:.035em;color:#b1a18b}
+.appointment-summary{grid-column:2;grid-row:2;justify-self:end;width:min(100%,460px);max-width:460px;margin-top:20px;padding:13px 0 0;border:0;border-top:1px solid #d5dce23b;border-radius:0;background:transparent;backdrop-filter:none;box-shadow:none}
+.appointment-summary>.eyebrow{display:none}
+.appointment-summary h2{font-size:14px;letter-spacing:.015em;margin:0 0 10px}
+.appointment-summary #appointment-teacher{font-size:14px;margin-bottom:5px}
+.appointment-summary time,.appointment-summary .appointment-topic{font-size:13px}
+.appointment-summary .appointment-topic{margin:6px 0 10px}
+.appointment-summary .room-code-line{padding-top:10px}
+.appointment-summary .role-entries{margin-top:10px}
+.appointment-summary .role-entries a{padding:8px 5px;background:#29241d60;border-color:#eadbc335;border-radius:3px;color:#ece1cd}
+.appointment-summary .copy-button{margin-top:10px;color:#dfd3bd;border-color:#dfd3bd42}
+.lounge-footer{color:#958b7b;font-size:10px}
+dialog{border-color:#f0e6cc36;border-radius:9px;background:#25231fec;backdrop-filter:blur(12px);box-shadow:0 26px 100px #0009}
+dialog::backdrop{background:#100e0b65;backdrop-filter:blur(5px)}
+dialog h2{font-family:Baskerville,Georgia,serif;font-weight:400;letter-spacing:0}
+@media(max-width:1000px) and (min-width:681px){.arrival{gap:0 24px}.welcome-actions>*{padding-inline:14px}.location-label{display:block}}
+@media(max-width:680px){
+  .topbar{height:62px;padding-inline:14px;gap:9px}
+  .brand{font-size:8px;gap:7px}.brand small{font-size:6px}.brand-mark{font-size:30px}
+  .location-label{display:none}.top-actions{gap:6px}.top-actions>*{font-size:10px;padding-inline:8px}
+  .arrival{inset:62px 0 44px;display:grid;grid-template-columns:minmax(0,1fr);align-content:end;gap:20px;padding:22px 24px 32px;overflow-y:auto}
+  .welcome,body.has-appointment .welcome{display:contents}
+  .welcome h1,body.has-appointment .welcome h1{grid-column:1;grid-row:1;font-size:clamp(42px,9vw,58px);margin:0}
+  .welcome h1 br{display:none}.welcome h1 em::before{content:" ";white-space:pre}
+  .welcome-actions{grid-column:1;grid-row:2;justify-self:start;gap:5px;margin:0;padding:0}
+  .welcome-actions>*,.welcome-actions .primary{font-size:12px;padding:12px 13px}
+  .appointment-summary,body.has-appointment .appointment-summary{grid-column:1;grid-row:3;width:100%;max-width:none;justify-self:start;margin:0;padding:13px 0 0}
+  .room-hint,body.has-appointment .welcome .room-hint{display:block;grid-column:1;grid-row:4;margin:0;font-size:9px}
+  .arrival::before{inset:45% 0 -44px}
+  .lounge-footer{font-size:9px}
+}

@@ -1,61 +1,61 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#080c16">
   <meta name="referrer" content="no-referrer">
-  <meta name="description" content="ISP 家庭会谈原型：老师、家长和学生，在同一空间看见成长。">
-  <title>家庭会谈室 · ISP × Boundless</title>
+  <meta name="description" content="A meeting space for teachers, parents and students with a shared sample learning report.">
+  <title>Meeting room · Boundless Classroom</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23080c16'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-size='46' fill='%239581ff'%3E∞%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="./meeting.css?v=family-1">
-  <script type="module" src="./meeting.js?v=family-1"></script>
+  <link rel="stylesheet" href="./meeting.css?v=original-study-2">
+  <script type="module" src="./meeting.js?v=original-study-2"></script>
 </head>
 <body>
-  <div id="meeting-scene" class="scene" aria-label="固定座位的三方会谈空间，中央是一块共享学习报告"></div>
+  <div id="meeting-scene" class="scene" aria-label="A three-seat meeting space with a shared learning report"></div>
   <div class="scene-shade" aria-hidden="true"></div>
   <header class="meeting-header">
-    <a class="brand" href="./reservation.html" aria-label="返回准备室"><img src="./assets/isp-program-logo.png" alt="ISP PROGRAM · SUIS QP"><span class="brand-divider"></span><span class="brand-name">BOUNDLESS<small>FAMILY MEETING</small></span></a>
-    <nav aria-label="会谈导航"><button class="text-button" id="open-report" type="button">查看报告</button><a class="text-button" href="./reservation.html" id="back-to-lounge">返回准备室</a></nav>
+    <a class="brand" href="./reservation.html" aria-label="Back to the Common Room"><span class="brand-mark" aria-hidden="true">∞</span><span class="brand-name">BOUNDLESS<small>CLASSROOM</small></span></a>
+    <nav aria-label="Meeting navigation"><button class="text-button" id="open-report" type="button">View report</button><a class="text-button" href="./reservation.html" id="back-to-lounge">Common Room</a></nav>
   </header>
 
   <main class="meeting-layout">
     <section class="arrival glass" id="arrival" aria-labelledby="arrival-title">
-      <p class="eyebrow">A MOMENT TO CONNECT</p>
-      <h1 id="arrival-title">一起，看见成长。</h1>
-      <p class="arrival-copy">老师、家长与学生，共享一份学习报告，<br>为下一步留出认真交谈的时间。</p>
+      <p class="eyebrow">MEETING ROOM</p>
+      <h1 id="arrival-title">Take a seat.</h1>
+      <p class="arrival-copy">Choose your seat to review the sample report.</p>
       <p class="appointment-line" id="appointment-line"></p>
-      <fieldset id="role-fieldset"><legend>以谁的身份进入？</legend><div class="role-options">
-        <label><input type="radio" name="role" value="teacher" checked><span><i class="role-symbol teacher" aria-hidden="true">T</i>老师</span></label>
-        <label><input type="radio" name="role" value="parent"><span><i class="role-symbol parent" aria-hidden="true">P</i>家长</span></label>
-        <label><input type="radio" name="role" value="student"><span><i class="role-symbol student" aria-hidden="true">S</i>学生</span></label>
+      <fieldset id="role-fieldset"><legend>Choose your role</legend><div class="role-options">
+        <label><input type="radio" name="role" value="teacher" checked><span><i class="role-symbol teacher" aria-hidden="true">T</i>Teacher</span></label>
+        <label><input type="radio" name="role" value="parent"><span><i class="role-symbol parent" aria-hidden="true">P</i>Parent</span></label>
+        <label><input type="radio" name="role" value="student"><span><i class="role-symbol student" aria-hidden="true">S</i>Student</span></label>
       </div></fieldset>
-      <label class="name-label" for="display-name">会谈中的称呼 <span>选填</span></label><input id="display-name" class="text-input" maxlength="24" autocomplete="off" placeholder="例如：林同学家长">
-      <button class="primary-button enter-button" id="enter-room" type="button">进入会谈室</button>
-      <p class="entry-note" id="entry-note">演示学习报告 · 2–3 人会谈原型</p>
+      <label class="name-label" for="display-name">Display name <span>Optional</span></label><input id="display-name" class="text-input" maxlength="24" autocomplete="off" placeholder="e.g. Alex (parent)">
+      <button class="primary-button enter-button" id="enter-room" type="button">Enter room</button>
+      <p class="entry-note" id="entry-note">Sample report · 2–3 person meeting demo</p>
       <p class="form-error" id="entry-error" role="alert" hidden></p>
     </section>
 
-    <aside class="session-info glass" id="session-info" hidden aria-label="当前会谈">
-      <p class="eyebrow">FAMILY CONVERSATION</p><h1>家庭会谈室</h1>
+    <aside class="session-info glass" id="session-info" hidden aria-label="Current meeting">
+      <p class="eyebrow">BOUNDLESS CLASSROOM</p><h1>Meeting room</h1>
       <p class="room-code-line">ROOM <span id="room-code"></span></p>
-      <ul id="participants" class="participant-list" aria-label="参与者"></ul>
-      <p class="session-note">一份报告，三个视角。<br>一起把下一步说清楚。</p>
+      <ul id="participants" class="participant-list" aria-label="Participants"></ul>
+      <p class="session-note">One report. Three perspectives.</p>
     </aside>
 
-    <section class="connection-message" aria-live="polite"><span id="connection-dot" aria-hidden="true"></span><p id="connection-status">正在准备会谈空间…</p></section>
-    <div class="look-hint" id="look-hint">拖动环视 · 固定座位</div>
+    <section class="connection-message" aria-live="polite"><span id="connection-dot" aria-hidden="true"></span><p id="connection-status">Preparing the room…</p></section>
+    <div class="look-hint" id="look-hint">Drag to look around · Fixed seat</div>
   </main>
 
-  <footer class="meeting-dock glass" id="meeting-dock" hidden aria-label="会谈控制">
-    <div class="dock-group"><button class="dock-button" id="microphone" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 10.5v1a6.5 6.5 0 0 0 13 0v-1M12 18v3m-3 0h6"/></svg><span id="microphone-label">开启麦克风</span></button><button class="dock-button" id="resume-audio" type="button" hidden>播放声音</button></div>
-    <div class="page-controls"><button id="previous-page" type="button" aria-label="上一页">‹</button><div><span id="page-number">01 / 04</span><small id="page-authority">由老师控制翻页</small></div><button id="next-page" type="button" aria-label="下一页">›</button></div>
-    <div class="dock-group"><button class="dock-button" id="invite-people" type="button">邀请同行</button><button class="dock-button xr-button" id="enter-vr" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14l2 3v8H15l-3-3-3 3H3V9Z"/><path d="M7 9v4m-2-2h4m7-1h.1m2 2h.1"/></svg><span id="vr-label">进入 VR</span></button><button class="dock-button exit-button" id="leave-room" type="button">离开</button></div>
+  <footer class="meeting-dock glass" id="meeting-dock" hidden aria-label="Meeting controls">
+    <div class="dock-group"><button class="dock-button" id="microphone" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 10.5v1a6.5 6.5 0 0 0 13 0v-1M12 18v3m-3 0h6"/></svg><span id="microphone-label">Enable mic</span></button><button class="dock-button" id="resume-audio" type="button" hidden>Resume audio</button></div>
+    <div class="page-controls"><button id="previous-page" type="button" aria-label="Previous page">‹</button><div><span id="page-number">01 / 04</span><small id="page-authority">Teacher controls pages</small></div><button id="next-page" type="button" aria-label="Next page">›</button></div>
+    <div class="dock-group"><button class="dock-button" id="invite-people" type="button">Invite</button><button class="dock-button xr-button" id="enter-vr" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14l2 3v8H15l-3-3-3 3H3V9Z"/><path d="M7 9v4m-2-2h4m7-1h.1m2 2h.1"/></svg><span id="vr-label">Enter VR</span></button><button class="dock-button exit-button" id="leave-room" type="button">Leave</button></div>
   </footer>
 
-  <dialog class="report-dialog" id="report-dialog" aria-labelledby="report-title"><header><div><p class="eyebrow">EXAMPLE LEARNING REPORT</p><h2 id="report-title">示例学习报告</h2></div><button class="close-button" id="close-report" type="button" aria-label="关闭报告">×</button></header><article id="report-content"></article><footer><span id="report-page-label"></span><span>虚构示例 · 非真实学生记录</span></footer></dialog>
-  <dialog class="invite-dialog" id="invite-dialog" aria-labelledby="invite-title"><header><div><p class="eyebrow">SHARE THIS MOMENT</p><h2 id="invite-title">邀请家长与学生</h2></div><button class="close-button" id="close-invite" type="button" aria-label="关闭邀请">×</button></header><p class="dialog-copy" id="invite-description"></p><div id="invite-links"></div><p class="copy-feedback" id="copy-feedback" role="status"></p></dialog>
+  <dialog class="report-dialog" id="report-dialog" aria-labelledby="report-title"><header><div><p class="eyebrow">EXAMPLE LEARNING REPORT</p><h2 id="report-title">Sample learning report</h2></div><button class="close-button" id="close-report" type="button" aria-label="Close report">×</button></header><article id="report-content"></article><footer><span id="report-page-label"></span><span>Fictional example · No real student records</span></footer></dialog>
+  <dialog class="invite-dialog" id="invite-dialog" aria-labelledby="invite-title"><header><div><p class="eyebrow">INVITATIONS</p><h2 id="invite-title">Invite parent and student</h2></div><button class="close-button" id="close-invite" type="button" aria-label="Close invitations">×</button></header><p class="dialog-copy" id="invite-description"></p><div id="invite-links"></div><p class="copy-feedback" id="copy-feedback" role="status"></p></dialog>
   <div id="toast" class="toast" role="status" hidden></div>
-  <noscript><p class="noscript">请启用 JavaScript 来打开会谈空间。老师信息和学习报告均为演示资料。</p></noscript>
+  <noscript><p class="noscript">Enable JavaScript to enter the meeting space. Teacher profiles and reports are demo content.</p></noscript>
 </body>
 </html>

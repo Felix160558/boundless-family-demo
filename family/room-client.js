@@ -2,24 +2,24 @@
  * apiOrigin is the signaling server origin; an empty value never simulates peers.
  * Microphone capture is only requested by enableMicrophone().
  */
-const LABELS={teacher:'老师',parent:'家长',student:'学生'};
+const LABELS={teacher:'Teacher',parent:'Parent',student:'Student'};
 const ERROR_TEXT={
-  service_missing:'尚未配置联机会谈服务，当前仅可本地预览。',
-  invalid_service:'会谈服务地址无效。',network:'暂时无法连接会谈服务，请检查网络。',
-  room_not_found:'会谈室不存在或已结束，请向老师获取新的邀请。',room_expired:'本次会谈已到期，请重新创建会谈室。',
-  invalid_invitation:'邀请链接无效，请使用对应身份的邀请链接。',role_taken:'这个身份已经有人进入，请使用另一个身份的邀请链接。',
-  room_full:'会谈室已满。',session_expired:'连接已失效，正在尝试重新加入。',
-  teacher_required:'只有老师可以控制共享报告。',invalid_page:'无法打开这一页。',
-  rate_limited:'操作较频繁，请稍后再试。',server_busy:'会谈服务暂时繁忙，请稍后再试。',
-  origin_not_allowed:'该网站尚未加入会谈服务的允许来源。',
-  microphone_secure:'麦克风需要 HTTPS 安全连接，请通过安全网址进入。',
-  microphone_unsupported:'此浏览器无法开启麦克风。',microphone_denied:'麦克风权限未开启，你仍可查看共享报告。',
-  microphone_missing:'没有找到可用的麦克风。',microphone_busy:'麦克风暂时无法使用，请检查设备或其他应用。',
-  not_joined:'请先进入会谈室。',webrtc_unavailable:'此浏览器不支持实时语音，可继续查看共享报告。',
-  peer_connection:'一条语音连接未建立，请检查网络及中继服务配置。',
-  invalid_response:'会谈服务返回了无法识别的响应。',
+  service_missing:'Live service is not connected. Local preview only.',
+  invalid_service:'The meeting service address is invalid.',network:'Cannot reach the meeting service. Check your connection.',
+  room_not_found:'This room does not exist or has ended. Ask the teacher for a new invitation.',room_expired:'This meeting has expired. Create a new room.',
+  invalid_invitation:'Invalid invitation. Use the link for your role.',role_taken:'This role is occupied. Use an invitation for another role.',
+  room_full:'The room is full.',session_expired:'Session expired. Trying to rejoin.',
+  teacher_required:'Only the teacher can control the shared report.',invalid_page:'This page is unavailable.',
+  rate_limited:'Too many requests. Please try again shortly.',server_busy:'The meeting service is busy. Please try again shortly.',
+  origin_not_allowed:'This website is not permitted by the meeting service.',
+  microphone_secure:'The microphone requires a secure HTTPS connection.',
+  microphone_unsupported:'Microphone access is unavailable in this browser.',microphone_denied:'Microphone permission is off. You can still view the report.',
+  microphone_missing:'No microphone was found.',microphone_busy:'The microphone is unavailable. Check your device and other apps.',
+  not_joined:'Join the room first.',webrtc_unavailable:'Live audio is unavailable in this browser. You can still view the report.',
+  peer_connection:'An audio connection failed. Check the network and relay configuration.',
+  invalid_response:'The meeting service returned an invalid response.',
 };
-function errorOf(code,cause){return Object.assign(new Error(ERROR_TEXT[code] || '会谈连接发生问题，请稍后重试。'),{code,cause});}
+function errorOf(code,cause){return Object.assign(new Error(ERROR_TEXT[code] || 'The meeting connection failed. Please try again.'),{code,cause});}
 function validPose(pose){
   try {
     const text=JSON.stringify(pose);if(!text || text.length>1800)return null;
@@ -109,7 +109,7 @@ export function createRoomClient({apiOrigin='',onState=()=>{},onParticipants=()=
   let session=null,joinDetails=null,people=[],cursor=0,generation=0,pollTimer=null,pollAbort=null,failures=0;
   let microphone=null,capturing=null,muted=true,audioContext=null,meterTimer=null,lastPose=0;
   let micQueue=Promise.resolve(),pageQueue=Promise.resolve();
-  let state={phase:'idle',message:base?'尚未进入会谈室。':ERROR_TEXT.service_missing,micEnabled:false,muted:true,audioBlocked:false};
+  let state={phase:'idle',message:base?'Not in a room yet.':ERROR_TEXT.service_missing,micEnabled:false,muted:true,audioBlocked:false};
   const currentPeople=()=>people.map(p=>({...p,isLocal:p.peerId===session?.peerId,speaking:analysers.get(p.peerId)?.speaking===true,connectionState:p.peerId===session?.peerId?'connected':peers.get(p.peerId)?.pc.connectionState || 'connecting'}));
   const emitPeople=()=>onParticipants(currentPeople());
   const emitState=patch=>{state={...state,...patch,micEnabled:Boolean(microphone),muted};onState({...state});};
@@ -215,7 +215,7 @@ export function createRoomClient({apiOrigin='',onState=()=>{},onParticipants=()=
     try{
       const data=await request(`events?roomId=${encodeURIComponent(session.roomId)}&cursor=${cursor}`,undefined,{signal:controller.signal});
       if(g!==generation)return;
-      if(data.resync){emitState({phase:'reconnecting',message:'正在恢复会谈状态…'});await restore(g);}
+      if(data.resync){emitState({phase:'reconnecting',message:'Restoring meeting state…'});await restore(g);}
       else{
         cursor=data.cursor;
         for(const event of data.events || []){
@@ -224,19 +224,19 @@ export function createRoomClient({apiOrigin='',onState=()=>{},onParticipants=()=
           else if(event.type==='signal')await peers.get(event.payload.from)?.receive(event.payload.signal);
         }
       }
-      failures=0;emitState({phase:'connected',message:'已进入联机会谈室。'});schedulePoll(g);
+      failures=0;emitState({phase:'connected',message:'Joined the live meeting.'});schedulePoll(g);
     }catch(error){
       if(g!==generation||!session)return;
       if(error.code==='session_expired'){
-        try{emitState({phase:'reconnecting',message:'正在重新加入会谈…'});await restore(g);failures=0;schedulePoll(g);return;}catch(rejoinError){error=rejoinError;}
+        try{emitState({phase:'reconnecting',message:'Rejoining the meeting…'});await restore(g);failures=0;schedulePoll(g);return;}catch(rejoinError){error=rejoinError;}
       }
       if(['room_expired','room_not_found','invalid_invitation','role_taken','origin_not_allowed'].includes(error.code)||Date.now()>session.expiresAt){
         report(error);await leave();emitState({phase:'error',message:error.message});return;
       }
-      failures++;emitState({phase:'reconnecting',message:'连接暂时中断，正在尝试恢复…'});schedulePoll(g,Math.min(8000,1000*2**Math.min(3,failures-1)));
+      failures++;emitState({phase:'reconnecting',message:'Connection interrupted. Reconnecting…'});schedulePoll(g,Math.min(8000,1000*2**Math.min(3,failures-1)));
     }finally{clearTimeout(timer);if(pollAbort===controller)pollAbort=null;}
   }
-  async function createRoom({teacherId='',slot='',topic='家庭学习会谈'}={}){
+  async function createRoom({teacherId='',slot='',topic='Learning progress meeting'}={}){
     try{return await request('rooms',{teacherId,slot,topic},{token:null});}catch(error){throw report(error);}
   }
   async function join({roomId,role,ticket,name}={}){
@@ -244,13 +244,13 @@ export function createRoomClient({apiOrigin='',onState=()=>{},onParticipants=()=
     if(!Object.hasOwn(LABELS,role)||!ticket)throw report(errorOf('invalid_invitation'));
     if(session)await leave();
     const g=++generation;joinDetails={roomId:String(roomId || '').toUpperCase(),role,ticket,name:name || LABELS[role]};
-    emitState({phase:'joining',message:'正在进入会谈室…',audioBlocked:false});
+    emitState({phase:'joining',message:'Joining the room…',audioBlocked:false});
     ensureAudioContext();if(audioContext)void audioContext.resume().catch(()=>{});
     try{
       const joined=await request('join',{...joinDetails,previousToken:savedToken(joinDetails.roomId,role)},{token:null});
       if(g!==generation){void request('leave',{roomId:joined.roomId},{token:joined.token}).catch(()=>{});return null;}
       session=joined;cursor=joined.cursor;saveToken(joined.roomId,role,joined.token);onPage(joined.page);reconcile(joined.participants);
-      emitState({phase:'connected',message:'已进入联机会谈室。'});
+      emitState({phase:'connected',message:'Joined the live meeting.'});
       if(!globalThis.RTCPeerConnection)report(errorOf('webrtc_unavailable'));
       schedulePoll(g,100);return joined;
     }catch(error){if(g===generation)emitState({phase:'error',message:error.message});throw report(error);}
@@ -319,7 +319,7 @@ export function createRoomClient({apiOrigin='',onState=()=>{},onParticipants=()=
     microphone?.getTracks().forEach(t=>t.stop());microphone=null;muted=true;capturing=null;
     for(const id of [...peers.keys()])dropPeer(id);for(const id of [...analysers.keys()])removeMeter(id);
     clearInterval(meterTimer);meterTimer=null;if(audioContext){void audioContext.close().catch(()=>{});audioContext=null;}
-    emitPeople();emitState({phase:'disconnected',message:'已离开会谈室。',audioBlocked:false});
+    emitPeople();emitState({phase:'disconnected',message:'Left the meeting.',audioBlocked:false});
     if(previous){if(!preserveResume)saveToken(previous.roomId,previous.role,'');try{await request('leave',{roomId:previous.roomId},{token:previous.token,keepalive:true});}catch{}}
   }
   function unload(){if(session)void leave({preserveResume:true});}

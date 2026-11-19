@@ -1,14 +1,14 @@
 import * as THREE from '../three.module.min.js';
-import {REPORT_PAGES, createReportCanvas, paintReport} from './report.js';
+import {REPORT_PAGES, createReportCanvas, paintReport} from './report.js?v=original-study-2';
 
 const ROLE_DETAILS = Object.freeze({
-  teacher: {label:'老师', color:0x9e8bea, seat:[-1.25,1.32,.50]},
-  parent: {label:'家长', color:0x6ab9c1, seat:[1.25,1.32,.50]},
-  student: {label:'学生', color:0xe5b78a, seat:[0,1.32,1.85]},
+  teacher: {label:'Teacher', color:0x9e8bea, seat:[-1.25,1.32,.50]},
+  parent: {label:'Parent', color:0x6ab9c1, seat:[1.25,1.32,.50]},
+  student: {label:'Student', color:0xe5b78a, seat:[0,1.32,1.85]},
 });
 const ROLES = Object.keys(ROLE_DETAILS);
-const FONT = 'Arial, "PingFang SC", "Microsoft YaHei", sans-serif';
-const LOGO_URL = new URL('./assets/isp-program-logo.png', import.meta.url).href;
+const FONT = 'Arial, sans-serif';
+const LOGO_URL = new URL('./assets/isp-program-mark.svg', import.meta.url).href;
 const clamp = THREE.MathUtils.clamp;
 const noOperation = () => {};
 
@@ -32,7 +32,7 @@ export function createMeetingScene(container, {
   role = 'teacher', onAction = noOperation, onPose = noOperation,
   onXRState = noOperation, onError = noOperation,
 } = {}) {
-  if (!container) throw new Error('缺少会谈室显示区域。');
+  if (!container) throw new Error('The meeting scene container is missing.');
   let renderer;
   try { renderer = new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'}); }
   catch (error) { onError(error); throw error; }
@@ -193,29 +193,28 @@ export function createMeetingScene(container, {
   box([3.77,2.19,.10],[0,1.99,-3.87],frameMaterial);
   const reportPanel=mesh(new THREE.PlaneGeometry(3.6,2.025),basic(0xffffff,{map:reportTexture,toneMapped:false}),[0,1.99,-3.81]);
 
-  // The supplied school mark is loaded unchanged, with its original proportions.
-  const logoBacking=box([1.70,.62,.06],[0,3.42,-3.88],frameMaterial);
+  // The school lettering is a transparent vector mark, without a backing plate.
   const logoTexture=new THREE.TextureLoader().load(LOGO_URL,loaded=>{
     if(disposed){loaded.dispose();return;}
     loaded.colorSpace=THREE.SRGBColorSpace;
     const aspect=loaded.image.width/loaded.image.height;
     logoPlate.scale.set(1.56,1.56/aspect,1);
-  },undefined,()=>onError(new Error('机构标识暂时未加载，请刷新页面重试。')));
+  },undefined,()=>onError(new Error('The school wordmark could not load. Please refresh.')));
   textures.add(logoTexture);
   logoTexture.colorSpace=THREE.SRGBColorSpace;
-  const logoPlate=mesh(new THREE.PlaneGeometry(1,1),basic(0xffffff,{map:logoTexture,toneMapped:false}),[0,3.42,-3.84]);
-  logoPlate.scale.set(1.56,1.56*70/214,1);
-  void logoBacking;
+  logoTexture.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());
+  const logoPlate=mesh(new THREE.PlaneGeometry(1,1),basic(0xffffff,{map:logoTexture,toneMapped:false,transparent:true,alphaTest:.02,depthWrite:false}),[0,3.42,-3.84]);
+  logoPlate.scale.set(1.56,.36,1);
   void reportPanel;
 
   const controlsGroup=new THREE.Group();
   scene.add(controlsGroup);
   controlsGroup.visible=false;
   const controls=[
-    {action:'previous',label:'上一页'},
-    {action:'next',label:'下一页'},
-    {action:'microphone',label:'开启麦克风'},
-    {action:'exit',label:'退出 VR'},
+    {action:'previous',label:'Previous'},
+    {action:'next',label:'Next'},
+    {action:'microphone',label:'Enable mic'},
+    {action:'exit',label:'Exit VR'},
   ];
   for(const control of controls){
     const canvas=makeTextCanvas(640,224);
@@ -226,7 +225,7 @@ export function createMeetingScene(container, {
   }
 
   function paintButton(button,enabled,highlighted=false){
-    const label=button.userData.action==='microphone'?(micEnabled?'关闭麦克风':'开启麦克风'):button.userData.label;
+    const label=button.userData.action==='microphone'?(micEnabled?'Mute mic':'Enable mic'):button.userData.label;
     const signature=`${label}|${enabled}|${highlighted}`;
     if(signature===button.userData.signature)return;
     button.userData.signature=signature;button.userData.enabled=enabled;
@@ -234,7 +233,7 @@ export function createMeetingScene(container, {
     ctx.fillStyle=enabled?(highlighted?'#4c4f80':'#22344e'):'#1b293a';ctx.fillRect(0,0,640,224);
     ctx.fillStyle=enabled?'#a497ef':'#465367';ctx.fillRect(0,0,640,7);
     ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`500 73px ${FONT}`;
-    ctx.fillStyle=enabled?'#f0f2f7':'#7e8b9b';ctx.fillText(label,320,115);
+    ctx.fillStyle=enabled?'#f0f2f7':'#7e8b9b';ctx.fillText(label,320,115,600);
     button.userData.texture.needsUpdate=true;
   }
   function refreshControls(){
@@ -259,8 +258,8 @@ export function createMeetingScene(container, {
     avatar.torso.visible=present;
     avatar.leftHand.visible=present;avatar.rightHand.visible=present;
     avatar.speakingRing.visible=state.connected===true&&state.speaking===true&&!isSelf;
-    const title=isSelf?`${details.label} · 你`:state.connected?`${details.label}${state.name?' · '+String(state.name).slice(0,8):''}`:`等待${details.label}`;
-    const subtitle=isSelf&&!state.connected?'本地预览':state.connected?(state.speaking?'正在发言':state.micEnabled?'麦克风已开启':'麦克风关闭'):'尚未加入会谈';
+    const title=isSelf?`${details.label} · You`:state.connected?`${details.label}${state.name?' · '+String(state.name).slice(0,16):''}`:`Waiting for ${details.label.toLowerCase()}`;
+    const subtitle=isSelf&&!state.connected?'Local preview':state.connected?(state.speaking?'Speaking':state.micEnabled?'Mic on':'Mic off'):'Not in the room';
     const labelKey=`${title}|${subtitle}|${present}`;
     if(labelKey!==avatar.labelKey){
       avatar.labelKey=labelKey;
@@ -378,14 +377,14 @@ export function createMeetingScene(container, {
     onXRState({active:false,frameRate:null,supportedFrameRates:[]});
   }
   async function enterVR(){
-    if(disposed)throw new Error('会谈室已经关闭。');
+    if(disposed)throw new Error('This meeting room is closed.');
     if(xrSession)return;
     if(openingXR)return;
-    if(!globalThis.isSecureContext||!navigator.xr)throw new Error('请在 Quest Browser 中通过 HTTPS 打开此会谈室。');
+    if(!globalThis.isSecureContext||!navigator.xr)throw new Error('Open this room over HTTPS in Quest Browser.');
     openingXR=true;
     let session;
     try{
-      if(!await navigator.xr.isSessionSupported('immersive-vr'))throw new Error('当前浏览器未提供沉浸式 VR，请使用 Quest Browser。');
+      if(!await navigator.xr.isSessionSupported('immersive-vr'))throw new Error('Immersive VR is unavailable in this browser. Please use Quest Browser.');
       session=await navigator.xr.requestSession('immersive-vr',{optionalFeatures:['local-floor']});
       if(disposed){await session.end();return;}
       let referenceType='local-floor';

@@ -1,11 +1,11 @@
 import { familyConfig } from './config.js';
-import { createMeetingScene } from './meeting-scene.js';
-import { REPORT_PAGES, REPORT_TITLE } from './report.js';
-import { createRoomClient } from './room-client.js';
+import { createMeetingScene } from './meeting-scene.js?v=original-study-2';
+import { REPORT_PAGES, REPORT_TITLE } from './report.js?v=original-study-2';
+import { createRoomClient } from './room-client.js?v=original-study-2';
 
 const $ = id => document.getElementById(id);
 const roles = ['teacher', 'parent', 'student'];
-const roleNames = { teacher: '老师', parent: '家长', student: '学生' };
+const roleNames = { teacher: 'Teacher', parent: 'Parent', student: 'Student' };
 const roleLetters = { teacher: 'T', parent: 'P', student: 'S' };
 const url = new URL(location.href);
 const fragment = new URLSearchParams(url.hash.slice(1));
@@ -36,19 +36,19 @@ function notify(message) {
 
 function explain(error) {
   const codes = {
-    role_taken: '这个身份已经在会谈中。请使用另一个身份的邀请链接。',
-    room_full: '这个会谈室的三个席位已占用。',
-    room_not_found: '会谈室尚未开放或已经结束，请向老师获取新的邀请。',
-    room_expired: '这次会谈已经到期，请老师重新建立会谈室。',
-    invalid_ticket: '邀请链接无效或已到期，请向老师获取新链接。',
-    teacher_required: '共享报告由老师控制翻页。',
-    service_unavailable: '联机服务尚未配置，当前只能在本机预览。',
-    signaling_unconfigured: '联机服务尚未配置，当前只能在本机预览。',
-    microphone_denied: '麦克风权限未开启。允许此网站使用麦克风后再试。',
+    role_taken: 'This role is already in the meeting. Use an invitation for another role.',
+    room_full: 'All three seats are occupied.',
+    room_not_found: 'This room is not open or has ended. Ask the teacher for a new invitation.',
+    room_expired: 'This meeting has expired. Ask the teacher to create a new room.',
+    invalid_ticket: 'This invitation is invalid or expired. Ask the teacher for a new link.',
+    teacher_required: 'The teacher controls the shared report.',
+    service_unavailable: 'Live service is not connected. Local preview only.',
+    signaling_unconfigured: 'Live service is not connected. Local preview only.',
+    microphone_denied: 'Microphone permission is off. Allow microphone access and try again.',
   };
   if (codes[error?.code]) return codes[error.code];
-  if (error?.name === 'NotAllowedError') return '操作没有获得设备许可。请检查浏览器的麦克风或 VR 权限。';
-  return error?.message || '暂时没有完成，请稍后再试。';
+  if (error?.name === 'NotAllowedError') return 'Permission was not granted. Check microphone or VR permissions.';
+  return error?.message || 'Could not complete this action. Please try again.';
 }
 
 function readHostCache(id) {
@@ -95,10 +95,10 @@ function updateParticipants() {
     icon.setAttribute('aria-hidden', 'true');
     const name = document.createElement('span');
     name.className = 'person-name';
-    name.textContent = person.connected ? `${person.name || roleNames[person.role]}${person.isLocal ? ' · 你' : ''}` : roleNames[person.role];
+    name.textContent = person.connected ? `${person.name || roleNames[person.role]}${person.isLocal ? ' · you' : ''}` : roleNames[person.role];
     const status = document.createElement('span');
     status.className = 'person-state';
-    status.textContent = person.connected ? (!serviceReady ? '本机' : person.micEnabled && !person.muted ? '麦克风开' : '已进入') : '等待进入';
+    status.textContent = person.connected ? (!serviceReady ? 'Local' : person.micEnabled && !person.muted ? 'Mic on' : 'Joined') : 'Waiting';
     li.append(icon, name, status);
     list.append(li);
   });
@@ -108,15 +108,15 @@ function updateParticipants() {
 function updateConnection() {
   document.body.dataset.connected = String(serviceReady && connection.phase === 'connected');
   let message;
-  if (!serviceReady) message = '本机预览 · 跨设备会谈待连接服务';
-  else if (!entered && !entering) message = ticket ? '已收到邀请 · 选择进入会谈' : '联机模式 · 等待建立会谈';
+  if (!serviceReady) message = 'Local preview · Live service not connected';
+  else if (!entered && !entering) message = ticket ? 'Invitation received · Select Join room' : 'Live mode · Waiting to create a room';
   else if (connection.phase === 'connected') {
     const count = participants.filter(person => person.connected).length;
-    message = `房间已连接 · ${count} / 3 人在场`;
-  } else message = connection.message || ({ joining: '正在连接会谈室…', reconnecting: '连接中断，正在尝试恢复…', disconnected: '会谈连接已断开', error: '会谈连接未成功' }[connection.phase] || '正在准备会谈…');
+    message = `Room connected · ${count} / 3 present`;
+  } else message = connection.message || ({ joining: 'Connecting to the room…', reconnecting: 'Connection interrupted. Reconnecting…', disconnected: 'Disconnected from the meeting', error: 'Could not connect to the meeting' }[connection.phase] || 'Preparing the meeting…');
   $('connection-status').textContent = message;
   $('microphone').disabled = !serviceReady || connection.phase !== 'connected';
-  $('microphone-label').textContent = connection.micEnabled ? (connection.muted ? '取消静音' : '麦克风已开') : '开启麦克风';
+  $('microphone-label').textContent = connection.micEnabled ? (connection.muted ? 'Unmute' : 'Mic on') : 'Enable mic';
   $('microphone').setAttribute('aria-pressed', String(connection.micEnabled && !connection.muted));
   $('resume-audio').hidden = !connection.audioBlocked;
   scene?.setMicState(connection.micEnabled && !connection.muted);
@@ -127,10 +127,10 @@ function renderReport(index) {
   const data = REPORT_PAGES[page];
   scene?.setReportPage(page);
   $('page-number').textContent = `${String(page + 1).padStart(2, '0')} / ${String(REPORT_PAGES.length).padStart(2, '0')}`;
-  $('report-page-label').textContent = `第 ${page + 1} / ${REPORT_PAGES.length} 页`;
+  $('report-page-label').textContent = `Page ${page + 1} / ${REPORT_PAGES.length}`;
   $('previous-page').disabled = role !== 'teacher' || page === 0;
   $('next-page').disabled = role !== 'teacher' || page === REPORT_PAGES.length - 1;
-  $('page-authority').textContent = role === 'teacher' ? (serviceReady ? '老师翻页，所有人同步' : '老师视角 · 本机翻页') : '跟随老师翻页';
+  $('page-authority').textContent = role === 'teacher' ? (serviceReady ? 'Teacher controls shared pages' : 'Teacher view · Local pages') : 'Following the teacher';
   const article = $('report-content');
   article.replaceChildren();
   const title = document.createElement('h3');
@@ -159,16 +159,16 @@ function renderReport(index) {
 }
 
 async function changePage(delta) {
-  if (role !== 'teacher') { notify('共享报告由老师控制翻页。'); return; }
+  if (role !== 'teacher') { notify('The teacher controls the shared report.'); return; }
   const next = Math.max(0, Math.min(REPORT_PAGES.length - 1, page + delta));
   if (serviceReady) {
-    if (connection.phase !== 'connected') { notify('连接会谈室后，老师可以同步翻页。'); return; }
+    if (connection.phase !== 'connected') { notify('Join the room to share page changes.'); return; }
     try { await client.setPage(next); } catch (error) { notify(explain(error)); }
   } else renderReport(next);
 }
 
 async function microphone() {
-  if (!serviceReady || connection.phase !== 'connected') { notify('当前为本机预览。联机服务连接后可以开启三方语音。'); return; }
+  if (!serviceReady || connection.phase !== 'connected') { notify('Local preview only. Connect the live service to enable voice.'); return; }
   try {
     if (!connection.micEnabled) await client.enableMicrophone();
     else await client.setMuted(!connection.muted);
@@ -203,14 +203,14 @@ try {
     role,
     onAction: onSceneAction,
     onPose(pose) { if (entered && serviceReady && connection.phase === 'connected') client.sendPose(pose); },
-    onXRState({ active }) { document.body.dataset.xr = String(active); $('vr-label').textContent = active ? '退出 VR' : '进入 VR'; },
+    onXRState({ active }) { document.body.dataset.xr = String(active); $('vr-label').textContent = active ? 'Exit VR' : 'Enter VR'; },
     onError(error) { notify(explain(error)); },
   });
 } catch (error) {
   const notice = document.createElement('div');
   notice.className = 'scene-failure';
-  const title = document.createElement('strong'); title.textContent = '三维场景暂时无法显示';
-  const detail = document.createElement('p'); detail.textContent = '仍可以查看示例报告；请使用支持 WebGL 的浏览器再打开空间。';
+  const title = document.createElement('strong'); title.textContent = '3D view unavailable';
+  const detail = document.createElement('p'); detail.textContent = 'You can still read the sample report. Use a WebGL browser to view the room.';
   notice.append(title, detail); $('meeting-scene').append(notice);
   $('enter-vr').disabled = true;
 }
@@ -222,9 +222,9 @@ function chooseRole(value) {
   const input = document.querySelector(`input[name="role"][value="${role}"]`);
   input.checked = true;
   scene?.setRole(role);
-  $('display-name').placeholder = role === 'parent' ? '例如：林同学家长' : role === 'student' ? '例如：林同学' : '例如：陈老师';
-  $('enter-room').textContent = serviceReady ? (role === 'teacher' && !ticket ? '建立会谈室' : '加入会谈室') : '进入空间预览';
-  $('entry-note').textContent = serviceReady ? '麦克风由你手动开启 · 学习报告为虚构示例' : '本机空间预览 · 尚未连接跨设备会谈服务';
+  $('display-name').placeholder = role === 'parent' ? 'e.g. Alex (parent)' : role === 'student' ? 'e.g. Alex' : 'e.g. Teacher Chen';
+  $('enter-room').textContent = serviceReady ? (role === 'teacher' && !ticket ? 'Create room' : 'Join room') : 'Enter preview';
+  $('entry-note').textContent = serviceReady ? 'Mic starts only when enabled · Fictional sample report' : 'Local preview · Live service not connected';
   renderReport(page);
 }
 
@@ -236,8 +236,8 @@ chooseRole(role);
 $('report-title').textContent = REPORT_TITLE;
 $('room-code').textContent = roomId;
 if (slot && Number.isFinite(Date.parse(slot))) {
-  $('appointment-line').textContent = new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', month: 'long', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(slot)) + ' · 上海时间 · 演示预约';
-} else $('appointment-line').textContent = '三个席位 · 一份共同的学习报告';
+  $('appointment-line').textContent = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Shanghai', month: 'long', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(slot)) + ' · Shanghai time · Demo booking';
+} else $('appointment-line').textContent = 'Three seats · One shared learning report';
 
 async function enterRoom() {
   if (entered || entering) return;
@@ -250,12 +250,12 @@ async function enterRoom() {
         if (cached) { invitations = cached.invitations; roomId = cached.roomId; ticket = cached.invitations.teacher; }
         if (!ticket) {
           const previousId = roomId;
-          const created = await client.createRoom({ teacherId, slot, topic: '家庭学习进展会谈 · 演示' });
+          const created = await client.createRoom({ teacherId, slot, topic: 'Learning progress meeting · Demo' });
           invitations = created.invitations; roomId = created.roomId; ticket = invitations.teacher;
           saveHostCache(created, previousId);
         }
       }
-      if (!ticket) throw Object.assign(new Error('请使用老师在会谈室内生成的家长或学生邀请链接。'), { code: 'invite_required' });
+      if (!ticket) throw Object.assign(new Error('Use the parent or student invitation created by the teacher inside the room.'), { code: 'invite_required' });
       await client.join({ roomId, role, ticket, name });
     } else {
       participants = [{ peerId: 'local-preview', role, name, connected: true, isLocal: true, micEnabled: false, muted: true }];
@@ -265,7 +265,7 @@ async function enterRoom() {
     document.body.dataset.entered = 'true';
     markRoomURL(); updateParticipants(); renderReport(page);
     $('invite-people').hidden = serviceReady && (!invitations || role !== 'teacher');
-    if (!serviceReady) $('invite-people').textContent = '分享预览';
+    if (!serviceReady) $('invite-people').textContent = 'Share preview';
   } catch (error) {
     $('entry-error').textContent = explain(error); $('entry-error').hidden = false;
   } finally { entering = false; $('enter-room').disabled = false; updateConnection(); }
@@ -289,19 +289,19 @@ function invitationURL(invitedRole) {
 
 $('invite-people').addEventListener('click', () => {
   const target = $('invite-links'); target.replaceChildren(); $('copy-feedback').textContent = '';
-  $('invite-title').textContent = serviceReady ? '邀请家长与学生' : '分享空间预览';
-  $('invite-description').textContent = serviceReady ? '每个身份有独立的邀请链接。把对应链接交给参与者；两个人到场即可开始，第三人可随后加入。' : '这些链接展示同一个房间设计的不同座位视角。目前各设备独立预览，不会互相连接或同步声音。';
+  $('invite-title').textContent = serviceReady ? 'Invite parent and student' : 'Share preview';
+  $('invite-description').textContent = serviceReady ? 'Share the matching invitation with each participant. Two people can begin; the third can join later.' : 'Preview the room from different seats. Devices are not connected and do not share audio.';
   for (const invitedRole of ['parent', 'student']) {
     const row = document.createElement('section'); row.className = 'invite-row';
-    const heading = document.createElement('h3'); heading.textContent = `${roleNames[invitedRole]}${serviceReady ? '邀请' : '视角预览'}`;
-    const input = document.createElement('input'); input.type = 'url'; input.readOnly = true; input.className = 'text-input'; input.value = invitationURL(invitedRole); input.setAttribute('aria-label', `${roleNames[invitedRole]}链接`);
+    const heading = document.createElement('h3'); heading.textContent = `${roleNames[invitedRole]}${serviceReady ? ' invitation' : ' preview'}`;
+    const input = document.createElement('input'); input.type = 'url'; input.readOnly = true; input.className = 'text-input'; input.value = invitationURL(invitedRole); input.setAttribute('aria-label', `${roleNames[invitedRole]} link`);
     const actions = document.createElement('div'); actions.className = 'invite-actions';
-    const button = document.createElement('button'); button.type = 'button'; button.textContent = '复制链接';
+    const button = document.createElement('button'); button.type = 'button'; button.textContent = 'Copy link';
     button.addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(input.value); $('copy-feedback').textContent = `${roleNames[invitedRole]}链接已复制。`; }
-      catch { input.focus(); input.select(); $('copy-feedback').textContent = '链接已选中，请手动复制。'; }
+      try { await navigator.clipboard.writeText(input.value); $('copy-feedback').textContent = `${roleNames[invitedRole]} link copied.`; }
+      catch { input.focus(); input.select(); $('copy-feedback').textContent = 'Link selected. Copy it manually.'; }
     });
-    const open = document.createElement('a'); open.href = input.value; open.target = '_blank'; open.rel = 'noopener noreferrer'; open.textContent = '打开此视角';
+    const open = document.createElement('a'); open.href = input.value; open.target = '_blank'; open.rel = 'noopener noreferrer'; open.textContent = 'Open view';
     actions.append(button, open); row.append(heading, input, actions); target.append(row);
   }
   $('invite-dialog').showModal();

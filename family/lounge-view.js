@@ -1,8 +1,9 @@
 import * as THREE from '../three.module.min.js';
 import { createCastleLounge } from '../live/castle-lounge.js?v=star-window-41';
+import { createSpaceSky } from '../space-sky.js?v=medieval-lounge-40';
 
 // Reuses the original modeled lounge and its portrait meshes without changing
-// the original source. The supplied ISP raster is used unchanged as a wall sign.
+// the original source. The ISP elements are a transparent vector wall mark.
 export function mountLounge({ container, gallery, onPortrait, onReady, onError }) {
   let renderer;
   try { renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' }); }
@@ -15,29 +16,24 @@ export function mountLounge({ container, gallery, onPortrait, onReady, onError }
   renderer.domElement.setAttribute('aria-hidden', 'true');
   container.append(renderer.domElement);
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#070c15');
-  const camera = new THREE.PerspectiveCamera(55, 1, .06, 240);
+  scene.background = new THREE.Color('#07090e');
+  const galaxy = new THREE.Group();
+  galaxy.rotation.set(.25, -.47, .045);
+  scene.add(galaxy);
+  const sky = createSpaceSky(galaxy, { compact: true });
+  const camera = new THREE.PerspectiveCamera(55, 1, .06, 600);
   camera.rotation.order = 'YXZ';
   const lounge = createCastleLounge(scene);
-  const points = [];
-  for (let i = 0; i < 1600; i++) {
-    const a = i * 2.399963, y = 1 - 2 * (i + .5) / 1600, radius = 95 + i % 31;
-    points.push(Math.cos(a) * Math.sqrt(1 - y * y) * radius, y * radius, Math.sin(a) * Math.sqrt(1 - y * y) * radius);
-  }
-  const starGeometry = new THREE.BufferGeometry();
-  starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
-  scene.add(new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: '#c5d7ee', size: .12, sizeAttenuation: true, transparent: true, opacity: .7 })));
   const signGroup = new THREE.Group();
   signGroup.position.set(2.1, 2.35, -7.08);
-  const backing = new THREE.Mesh(new THREE.BoxGeometry(2.06, .76, .045), new THREE.MeshStandardMaterial({ color: '#372b20', roughness: .9 }));
-  signGroup.add(backing);
   lounge.group.add(signGroup);
   let needsFrame = true;
-  new THREE.TextureLoader().load(new URL('./assets/isp-program-logo.png', import.meta.url).href, map => {
+  new THREE.TextureLoader().load(new URL('./assets/isp-program-mark.svg', import.meta.url).href, map => {
     map.colorSpace = THREE.SRGBColorSpace;
-    const sign = new THREE.Mesh(new THREE.PlaneGeometry(1.96, 1.96 * map.image.height / map.image.width), new THREE.MeshBasicMaterial({ map, toneMapped: false }));
+    map.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+    const sign = new THREE.Mesh(new THREE.PlaneGeometry(1.96, 1.96 * map.image.height / map.image.width), new THREE.MeshBasicMaterial({ map, toneMapped: false, transparent: true, alphaTest: .02, depthWrite: false }));
     sign.position.z = .03;
-    sign.name = 'ISP PROGRAM / SUIS QP original supplied logo';
+    sign.name = 'ISP PROGRAM / SUIS QP transparent wordmark';
     signGroup.add(sign); needsFrame = true;
   }, undefined, () => { needsFrame = true; });
   const buttons = [...gallery.querySelectorAll('[data-teacher]')];
@@ -71,8 +67,9 @@ export function mountLounge({ container, gallery, onPortrait, onReady, onError }
     if (disposed) return;
     const width = container.clientWidth, height = container.clientHeight;
     if (!width || !height) return;
-    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.75));
     renderer.setSize(width,height,false); camera.aspect = width/height; camera.fov = width < 680 ? 65 : 55;
+    sky.resize(height, renderer.getPixelRatio());
     camera.updateProjectionMatrix(); lounge.layout(camera,width,height); pose();
   }
   const down = event => {
@@ -100,6 +97,7 @@ export function mountLounge({ container, gallery, onPortrait, onReady, onError }
   renderer.setAnimationLoop(time => {
     if (disposed || document.hidden || (!needsFrame && (reduce.matches || time-lastTime < 33))) return;
     const elapsed = Math.min(.05,Math.max(0,(time-lastTime)/1000)); lastTime = time; needsFrame = false;
+    sky.update(reduce.matches ? 0 : elapsed);
     lounge.update(time,elapsed,reduce.matches); renderer.render(scene,camera);
   });
   return {

@@ -1,20 +1,28 @@
 export const TEACHERS = Object.freeze([
-  { id: 'teacher-1', name: '陆老师', english: 'LEARNING & SCIENCE', field: '学科学习与方法', specialty: '化学 · 科学学习 · 解题思路', description: '从一份作业、一个没听懂的概念开始，一起找到学习中的具体困难。', focus: ['梳理知识理解与表达', '讨论可执行的学习方法', '确定下一阶段的小目标'], portrait: 0 },
-  { id: 'teacher-2', name: '沈老师', english: 'FAMILY & CONNECTION', field: '家校沟通与陪伴', specialty: '学习习惯 · 家庭沟通 · 阶段反馈', description: '让孩子说出自己的感受，也让家长更清楚地了解学习中发生的变化。', focus: ['听见学生的想法与需要', '分享课堂与家庭中的观察', '约定彼此能做到的支持'], portrait: 1 },
-  { id: 'teacher-3', name: '周老师', english: 'GROWTH & DIRECTION', field: '成长目标与规划', specialty: '阶段目标 · 学习路径 · 时间安排', description: '把长远的期待变成眼前可以实践的一步，让下一次进步有清楚的方向。', focus: ['回顾本阶段的收获', '讨论优先级与时间安排', '一起形成下一步计划'], portrait: 2 },
+  { id: 'teacher-1', name: 'Teacher Lu', english: 'LEARNING & SCIENCE', field: 'Learning & study skills', specialty: 'Chemistry · Science · Problem solving', description: 'Start with an assignment or a difficult concept and find the next step together.', focus: ['Clarify concepts and explanations', 'Explore practical study methods', 'Set a manageable next goal'], portrait: 0 },
+  { id: 'teacher-2', name: 'Teacher Shen', english: 'FAMILY & CONNECTION', field: 'School & family communication', specialty: 'Study habits · Communication · Progress reviews', description: 'Hear the student perspective and share observations from school and home.', focus: ['Listen to student ideas and needs', 'Share observations from school and home', 'Agree on practical support'], portrait: 1 },
+  { id: 'teacher-3', name: 'Teacher Zhou', english: 'GROWTH & DIRECTION', field: 'Goals & planning', specialty: 'Learning goals · Study plans · Time management', description: 'Turn long-term goals into clear, achievable next steps.', focus: ['Review recent progress', 'Discuss priorities and time', 'Plan the next steps together'], portrait: 2 },
 ]);
 
 export const getTeacher = id => TEACHERS.find(item => item.id === id) || TEACHERS[0];
-export const ROLE_NAMES = Object.freeze({ teacher: '老师', parent: '家长', student: '学生' });
+export const ROLE_NAMES = Object.freeze({ teacher: 'Teacher', parent: 'Parent', student: 'Student' });
 export const APPOINTMENT_KEY = 'isp_family_demo_appointments_v1';
 
+// Display bookings saved by the earlier demo in the current interface language.
+const legacyTopics = Object.freeze({
+  '阶段学习反馈': 'Learning progress review',
+  '学习方法与习惯': 'Study methods and habits',
+  '家庭支持与沟通': 'Family support and communication',
+  '下一阶段的学习目标': 'Next learning goals',
+});
+
 const dateParts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' });
-const fullDate = new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', month: 'long', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
-const shortDay = new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', month: 'numeric', day: 'numeric', weekday: 'short' });
+const fullDate = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Shanghai', month: 'long', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
+const shortDay = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Shanghai', month: 'numeric', day: 'numeric', weekday: 'short' });
 
 export function formatSlot(iso) {
   const value = new Date(iso);
-  return Number.isFinite(value.getTime()) ? fullDate.format(value) : '时间待确认';
+  return Number.isFinite(value.getTime()) ? fullDate.format(value) : 'Time to be confirmed';
 }
 
 export function upcomingSlots(teacherId, now = new Date()) {
@@ -38,7 +46,7 @@ export function readAppointments() {
   try {
     const values = JSON.parse(localStorage.getItem(APPOINTMENT_KEY) || '[]');
     if (!Array.isArray(values)) return [];
-    return values.filter(item => item && /^[A-Z0-9]{8,12}$/.test(item.room) && TEACHERS.some(t => t.id === item.teacherId) && Number.isFinite(new Date(item.slot).getTime())).slice(0, 12);
+    return values.filter(item => item && /^[A-Z0-9]{8,12}$/.test(item.room) && TEACHERS.some(t => t.id === item.teacherId) && Number.isFinite(new Date(item.slot).getTime())).slice(0, 12).map(item => ({...item, topic: legacyTopics[item.topic] || item.topic}));
   } catch { return []; }
 }
 

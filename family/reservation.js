@@ -1,4 +1,4 @@
-import { TEACHERS, getTeacher, ROLE_NAMES, upcomingSlots, formatSlot, makeRoomCode, readAppointments, saveAppointment, meetingURL } from './demo-data.js';
+import { TEACHERS, getTeacher, ROLE_NAMES, upcomingSlots, formatSlot, makeRoomCode, readAppointments, saveAppointment, meetingURL } from './demo-data.js?v=original-study-2';
 
 const $ = id => document.getElementById(id);
 const teacherDialog = $('teacher-dialog');
@@ -18,7 +18,7 @@ function openTeacher(id) {
   $('teacher-specialty').textContent = selectedTeacher.specialty;
   $('teacher-description').textContent = selectedTeacher.description;
   $('teacher-art').style.backgroundPosition = `${selectedTeacher.portrait*50}% center`;
-  $('teacher-art').setAttribute('aria-label',`${selectedTeacher.name}的虚构演示画像`);
+  $('teacher-art').setAttribute('aria-label',`Fictional demo portrait of ${selectedTeacher.name}`);
   $('teacher-focus').replaceChildren(...selectedTeacher.focus.map(text => { const li=document.createElement('li'); li.textContent=text; return li; }));
   $('slot-options').replaceChildren(...upcomingSlots(id).map((slot,index) => {
     const label=document.createElement('label'); label.className='slot-option';
@@ -52,9 +52,9 @@ function showAppointment(value, message='') {
   currentAppointment=value;
   const teacher=getTeacher(value.teacherId);
   $('appointment-teacher').textContent=`${teacher.name} · ${teacher.field}`;
-  $('appointment-time').textContent=`${formatSlot(value.slot)} · 北京时间`;
+  $('appointment-time').textContent=`${formatSlot(value.slot)} · Shanghai time`;
   $('appointment-time').dateTime=value.slot;
-  $('appointment-topic').textContent=value.topic || '阶段学习反馈';
+  $('appointment-topic').textContent=value.topic || 'Learning progress review';
   $('appointment-code').textContent=value.room;
   for (const role of Object.keys(ROLE_NAMES)) $('enter-'+role).href=meetingURL(value,role);
   $('appointment-feedback').textContent=message;
@@ -64,10 +64,10 @@ function showAppointment(value, message='') {
 $('booking-form').addEventListener('submit',event=>{
   event.preventDefault();
   const slot = new FormData(event.currentTarget).get('slot');
-  if (!slot || !upcomingSlots(selectedTeacher.id).some(item=>item.iso===slot)) { $('booking-feedback').textContent='请重新选择一个演示时段。'; return; }
+  if (!slot || !upcomingSlots(selectedTeacher.id).some(item=>item.iso===slot)) { $('booking-feedback').textContent='Please select another demo time.'; return; }
   const appointment={room:makeRoomCode(),teacherId:selectedTeacher.id,slot,topic:$('topic-select').value,createdAt:new Date().toISOString()};
   const persisted=saveAppointment(appointment);
-  showAppointment(appointment,persisted?'演示预约已保存在此浏览器，不会通知真实老师。':'此浏览器无法保存预约；当前入口仍可使用，请复制演示邀请。');
+  showAppointment(appointment,persisted?'Demo booking saved in this browser. No teacher has been notified.':'This browser could not save the booking. Copy the demo links to keep them.');
   teacherDialog.close();
   $('appointment-summary').scrollIntoView({behavior:'auto',block:'nearest'});
   $('enter-teacher').focus({preventScroll:true});
@@ -76,18 +76,18 @@ $('booking-form').addEventListener('submit',event=>{
 function invitationText() {
   if (!currentAppointment) return '';
   const a=currentAppointment,t=getTeacher(a.teacherId);
-  return [`ISP 家庭会谈 · 演示邀请`,`${t.name}（虚构演示老师）`,`${formatSlot(a.slot)}（北京时间）`,`主题：${a.topic || '阶段学习反馈'}`,`演示房间：${a.room}`,'',...Object.entries(ROLE_NAMES).map(([role,name])=>`${name}身份预览：${meetingURL(a,role)}`),'','此邀请用于演示页面和会谈流程，不代表真实预约。在线会谈请使用老师在会谈室生成的邀请。'].join('\n');
+  return [`Boundless Classroom · Demo invitation`,`${t.name} (fictional demo teacher)`,`${formatSlot(a.slot)} (Shanghai time)`,`Topic: ${a.topic || 'Learning progress review'}`,`Demo room: ${a.room}`,'',...Object.entries(ROLE_NAMES).map(([role,name])=>`${name} preview: ${meetingURL(a,role)}`),'','These links preview the meeting flow, not a real booking. For a live meeting, use the invitation created by the teacher inside the room.'].join('\n');
 }
 $('copy-invitation').addEventListener('click',async()=>{
   const text=invitationText(); if (!text) return;
-  try { await navigator.clipboard.writeText(text); $('appointment-feedback').textContent='演示邀请已复制。'; }
+  try { await navigator.clipboard.writeText(text); $('appointment-feedback').textContent='Demo invitation copied.'; }
   catch { $('invitation-text').value=text; $('invitation-dialog').showModal(); $('invitation-text').focus(); $('invitation-text').select(); }
 });
 $('select-invitation').addEventListener('click',()=>{ $('invitation-text').focus(); $('invitation-text').select(); });
 const previous=readAppointments()[0]; if(previous)showAppointment(previous);
 
 requestAnimationFrame(()=>{
-  import('./lounge-view.js?v=family-1').then(({mountLounge})=>{
-    lounge=mountLounge({container:$('lounge-scene'),gallery:$('portrait-gallery'),onPortrait:openTeacher,onError:()=>{$('room-hint').textContent='当前设备未显示三维场景，仍可点击画像查看演示老师。';}});
-  }).catch(()=>{$('room-hint').textContent='三维准备室暂未加载，仍可点击画像查看演示老师。';});
+  import('./lounge-view.js?v=original-study-2').then(({mountLounge})=>{
+    lounge=mountLounge({container:$('lounge-scene'),gallery:$('portrait-gallery'),onPortrait:openTeacher,onError:()=>{$('room-hint').textContent='3D view unavailable. You can still select a teacher portrait.';}});
+  }).catch(()=>{$('room-hint').textContent='The room has not loaded. You can still select a teacher portrait.';});
 });

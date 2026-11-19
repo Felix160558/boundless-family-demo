@@ -1,66 +1,68 @@
-export const REPORT_TITLE = '一起看见成长';
+export const REPORT_TITLE = 'Learning report';
 
 // All names, observations and next steps below are fictional demonstration data.
 export const REPORT_PAGES = Object.freeze([
   {
-    eyebrow: '示例学习报告 · 01',
-    title: '本周学习概览',
-    subtitle: '示例学生：林同学 · 高中化学',
+    eyebrow: 'DEMO LEARNING REPORT · 01',
+    title: 'This week in learning',
+    subtitle: 'Sample student: Alex · Chemistry',
     sections: [
-      {title: '这周在学什么', body: '电极反应与电子转移。先理解概念，再把过程说清楚。'},
-      {title: '已经有的进步', body: '能在基础例题中识别氧化与还原，并说明判断理由。'},
-      {title: '一起关注的地方', body: '独立书写半反应式时，还需要形成稳定的检查步骤。'},
+      {title: 'Current focus', body: 'Electrode reactions and electron transfer: understand, then explain.'},
+      {title: 'Progress so far', body: 'Identifies oxidation and reduction in basic examples and explains why.'},
+      {title: 'Next area to develop', body: 'Build a consistent check for independently written half-equations.'},
     ],
-    footer: '全部内容均为演示示例，不对应真实学生或实际评价。',
+    footer: 'Fictional example. No real student records or assessment.',
   },
   {
-    eyebrow: '示例学习报告 · 02',
-    title: '把卡点说清楚',
-    subtitle: '学生、家长和老师，各自补充一个视角。',
+    eyebrow: 'DEMO LEARNING REPORT · 02',
+    title: 'Understanding the difficulty',
+    subtitle: 'Three perspectives: student, parent and teacher.',
     sections: [
-      {title: '学生的表达', body: '听讲时能够理解，独立练习时有时不知道先检查哪里。'},
-      {title: '老师的观察', body: '尝试固定顺序：先检查原子守恒，再检查电荷守恒。'},
-      {title: '家长的支持', body: '留出解释的时间，听孩子用自己的语言说清检查过程。'},
+      {title: 'Student perspective', body: 'I understand in class, but sometimes do not know what to check first.'},
+      {title: 'Teacher observation', body: 'Use a fixed order: check atoms first, then check charge.'},
+      {title: 'Support at home', body: 'Allow time for the student to explain each check in their own words.'},
     ],
-    footer: '这是一段虚构的会谈材料，用于体验三方共同查看。',
+    footer: 'Fictional meeting material for this shared report demo.',
   },
   {
-    eyebrow: '示例学习报告 · 03',
-    title: '下一周的小目标',
-    subtitle: '把目标变小，把行动说具体。',
+    eyebrow: 'DEMO LEARNING REPORT · 03',
+    title: 'Goals for next week',
+    subtitle: 'Small goals, clear actions.',
     sections: [
-      {title: '学生', body: '完成三道基础练习，并在答案旁保留自己的检查过程。'},
-      {title: '老师', body: '提供一次简短反馈，再用一道新情境题检查理解。'},
-      {title: '家长', body: '安排一次十分钟复盘，先听孩子解释，再讨论需要的帮助。'},
+      {title: 'Student', body: 'Complete three basic exercises and show the checks beside each answer.'},
+      {title: 'Teacher', body: 'Give brief feedback, then check understanding with a new question.'},
+      {title: 'Parent', body: 'Set aside ten minutes to listen, review progress and discuss support.'},
     ],
-    footer: '行动安排仅供原型演示，尚未发送给任何真实老师。',
+    footer: 'Demo plan only. No real teacher has been notified.',
   },
   {
-    eyebrow: '示例学习报告 · 04',
-    title: '带着一个共识离开',
-    subtitle: '让今天的讨论，成为下一次进步的起点。',
+    eyebrow: 'DEMO LEARNING REPORT · 04',
+    title: 'Agreeing on the next step',
+    subtitle: 'Leave with a clear, shared plan.',
     sections: [
-      {title: '先完成', body: '整理一张“原子守恒与电荷守恒”的检查清单。'},
-      {title: '下次一起看', body: '一道仍有困惑的题目，以及一个已经做到的小进步。'},
-      {title: '共同确认', body: '老师给出方向，学生说明需要，家长提供可持续的支持。'},
+      {title: 'First action', body: 'Make a short checklist for conserving atoms and charge.'},
+      {title: 'Next review', body: 'Bring one difficult question and one example of progress.'},
+      {title: 'Shared agreement', body: 'The teacher guides, the student shares needs, and the parent supports.'},
     ],
-    footer: '演示报告结束 · 由老师控制共享面板的翻页。',
+    footer: 'End of demo report · Pages are controlled by the teacher.',
   },
 ].map(page => Object.freeze({...page, sections:Object.freeze(page.sections.map(section=>Object.freeze(section)))})));
 
-const FONT = 'Arial, "PingFang SC", "Microsoft YaHei", sans-serif';
+const FONT = 'Arial, sans-serif';
 
 function wrapText(context, text, width) {
   const lines = [];
-  let line = '';
-  for (const character of String(text)) {
-    if (character === '\n') { lines.push(line); line = ''; continue; }
-    if (line && context.measureText(line + character).width > width) {
-      lines.push(line);
-      line = character;
-    } else line += character;
+  for (const paragraph of String(text).split('\n')) {
+    let line = '';
+    for (const word of paragraph.trim().split(/\s+/)) {
+      const next = line ? `${line} ${word}` : word;
+      if (line && context.measureText(next).width > width) {
+        lines.push(line);
+        line = word;
+      } else line = next;
+    }
+    lines.push(line);
   }
-  if (line) lines.push(line);
   return lines;
 }
 
@@ -115,7 +117,7 @@ export function createReportCanvas(pageIndex = 0, {width = 1600, height = 900} =
   canvas.width = width;
   canvas.height = height;
   const context = canvas.getContext('2d');
-  if (!context) throw new Error('当前浏览器无法绘制共享报告。');
+  if (!context) throw new Error('This browser cannot draw the shared report.');
   paintReport(context, pageIndex, width, height);
   return canvas;
 }
