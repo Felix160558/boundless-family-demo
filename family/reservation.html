@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#151513">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="走进 ISP 准备室，点击墙上的演示老师画像，了解老师、选择演示时段，再进入家庭会谈。">
+  <title>准备室 · ISP 家庭会谈</title>
+  <link rel="stylesheet" href="./reservation.css?v=family-1">
+  <script type="module" src="./reservation.js?v=family-1"></script>
+</head>
+<body data-station="lounge">
+  <div id="lounge-scene" aria-hidden="true"></div>
+  <header class="topbar">
+    <a href="../" class="isp-brand" aria-label="返回 ISP 家庭会谈首页"><img src="./assets/isp-program-logo.png" alt="ISP PROGRAM / SUIS QP" width="206" height="70"></a>
+    <span class="location-label">THE COMMON ROOM <span>准备室</span></span>
+    <nav class="top-actions" aria-label="准备室操作"><button type="button" id="center-view">回正视角</button><button type="button" id="open-join">加入会谈</button><a href="../">返回首页</a></nav>
+  </header>
+  <nav id="portrait-gallery" class="portrait-gallery" aria-label="墙上的演示老师画像">
+    <button class="portrait-hotspot" type="button" data-teacher="teacher-1" aria-label="点击墙上陆老师的画像，查看演示资料并预约"><span>陆老师 <small>学科学习</small></span></button>
+    <button class="portrait-hotspot" type="button" data-teacher="teacher-2" aria-label="点击墙上沈老师的画像，查看演示资料并预约"><span>沈老师 <small>家校沟通</small></span></button>
+    <button class="portrait-hotspot" type="button" data-teacher="teacher-3" aria-label="点击墙上周老师的画像，查看演示资料并预约"><span>周老师 <small>成长规划</small></span></button>
+  </nav>
+  <main class="arrival">
+    <section class="welcome" aria-labelledby="lounge-title">
+      <p class="eyebrow">A MOMENT BEFORE WE MEET</p>
+      <h1 id="lounge-title">沟通，<br><em>从认识开始。</em></h1>
+      <p class="welcome-copy">点击墙上的老师画像，了解擅长的方向，<br>为你们的下一次会谈留出时间。</p>
+      <div class="welcome-actions"><button class="primary" type="button" id="choose-portrait">选择墙上的老师</button><a class="quiet-link" href="./meeting.html?role=teacher">先看看会谈室</a></div>
+      <p class="room-hint" id="room-hint">拖动空白处环视 · 点击画像查看资料</p>
+    </section>
+    <aside id="appointment-summary" class="appointment-summary" aria-labelledby="appointment-heading" hidden>
+      <p class="eyebrow">YOUR DEMO APPOINTMENT</p>
+      <h2 id="appointment-heading">演示预约已保存</h2>
+      <p id="appointment-teacher"></p><time id="appointment-time"></time>
+      <p class="appointment-topic" id="appointment-topic"></p>
+      <div class="room-code-line"><span>演示房间</span><strong id="appointment-code"></strong></div>
+      <div class="role-entries" aria-label="选择预览身份"><a id="enter-teacher" href="./meeting.html?role=teacher">老师</a><a id="enter-parent" href="./meeting.html?role=parent">家长</a><a id="enter-student" href="./meeting.html?role=student">学生</a></div>
+      <p class="entry-note">选择身份，打开会谈室预览。</p>
+      <button type="button" id="copy-invitation" class="copy-button">复制演示邀请</button>
+      <p id="appointment-feedback" class="feedback" role="status"></p>
+    </aside>
+  </main>
+  <footer class="lounge-footer"><span>演示老师与时段 · 预约仅保存在此浏览器</span><span>Love, Share and Peace.</span></footer>
+
+  <dialog id="teacher-dialog" class="teacher-dialog" aria-labelledby="teacher-name">
+    <button type="button" class="close-dialog" data-close="teacher-dialog" aria-label="关闭老师资料">×</button>
+    <div class="profile-layout">
+      <div class="profile-art-column"><div id="teacher-art" class="teacher-art" role="img" aria-label="虚构演示老师画像"></div><span class="demo-label">虚构演示老师</span></div>
+      <div class="teacher-profile">
+        <p class="eyebrow" id="teacher-english"></p><h2 id="teacher-name"></h2>
+        <p class="teacher-specialty" id="teacher-specialty"></p><p class="teacher-description" id="teacher-description"></p>
+        <ul id="teacher-focus" class="teacher-focus"></ul>
+      </div>
+    </div>
+    <form id="booking-form" class="booking-form">
+      <fieldset><legend>选择一次会谈时间 <span>30 分钟 · 北京时间</span></legend><div id="slot-options" class="slot-options"></div></fieldset>
+      <label for="topic-select" class="topic-label">这次想聊什么</label>
+      <select id="topic-select"><option>阶段学习反馈</option><option>学习方法与习惯</option><option>家庭支持与沟通</option><option>下一阶段的学习目标</option></select>
+      <div class="booking-bottom"><p>这些时段用于演示，不代表真实教师档期；保存后不会向老师发送通知。</p><button class="primary" type="submit">保存演示预约</button></div>
+      <p class="feedback" id="booking-feedback" role="status"></p>
+    </form>
+  </dialog>
+
+  <dialog id="join-dialog" class="small-dialog" aria-labelledby="join-title">
+    <button type="button" class="close-dialog" data-close="join-dialog" aria-label="关闭加入会谈">×</button>
+    <p class="eyebrow">JOIN THE SPACE</p><h2 id="join-title">打开会谈室</h2>
+    <p class="dialog-description">输入演示房间号，选择你的预览身份。已有在线邀请时，请直接打开老师发来的完整邀请链接。</p>
+    <form id="join-form"><label for="join-code">演示房间号</label><input id="join-code" required minlength="8" maxlength="12" pattern="[A-Za-z0-9]{8,12}" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="例如 ABCD2345"><label for="join-role">你的身份</label><select id="join-role"><option value="parent">家长</option><option value="student">学生</option><option value="teacher">老师</option></select><button class="primary" type="submit">打开预览</button></form>
+  </dialog>
+  <dialog id="invitation-dialog" class="small-dialog" aria-labelledby="invitation-title"><button type="button" class="close-dialog" data-close="invitation-dialog" aria-label="关闭演示邀请">×</button><h2 id="invitation-title">演示邀请</h2><p class="dialog-description">可以选中下面的文字，复制给参与演示的人。</p><textarea id="invitation-text" readonly rows="10" aria-label="演示邀请内容"></textarea><button type="button" id="select-invitation" class="primary">选中邀请内容</button></dialog>
+  <noscript><p class="noscript-note">请开启 JavaScript 以点击墙上画像和保存演示预约。<a href="../">返回首页</a></p></noscript>
+</body>
+</html>
