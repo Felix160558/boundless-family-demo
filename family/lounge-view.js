@@ -42,7 +42,7 @@ export function mountLounge({ container, gallery, onPortrait, onReady, onError }
   const buttons = [...gallery.querySelectorAll('[data-teacher]')];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const center = new THREE.Vector3(), normal = new THREE.Vector3(), cameraPosition = new THREE.Vector3();
-  let yaw = 0, pitch = 0, drag = null, lastTime = 0, disposed = false, firstFrameShown = false;
+  let yaw = 0, pitch = 0, drag = null, lastTime = 0, disposed = false, firstFrameShown = false, paintedFrames = 0;
   lounge.group.userData.requestRender = () => { needsFrame = true; };
 
   function positionPortraits() {
@@ -102,7 +102,7 @@ export function mountLounge({ container, gallery, onPortrait, onReady, onError }
     const elapsed = Math.min(.05,Math.max(0,(time-lastTime)/1000)); lastTime = time; needsFrame = false;
     sky.update(reduce.matches ? 0 : elapsed);
     lounge.update(time,elapsed,reduce.matches); renderer.render(scene,camera);
-    if (!firstFrameShown) {
+    if (!firstFrameShown && ++paintedFrames >= 2) {
       firstFrameShown = true;
       document.body.dataset.loungeReady = 'true';
       renderer.domElement.style.opacity = '1';
