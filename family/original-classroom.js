@@ -213,7 +213,7 @@ export function createOriginalClassroom(scene, renderer, { onError = () => {} } 
   const teacher=createCatTeacher(()=>{});
   const teacherSpot=new THREE.Group();
   teacherSpot.position.set(-2.55,0,.35);
-  teacher.group.position.set(0,0,0);
+  teacher.group.position.set(0,.1,0);
   teacher.group.rotation.y=.25;
   teacherSpot.add(teacher.group);
   room.add(teacherSpot);
