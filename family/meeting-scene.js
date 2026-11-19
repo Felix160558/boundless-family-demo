@@ -1,10 +1,11 @@
 import * as THREE from '../three.module.min.js';
 import {REPORT_PAGES, createReportCanvas, paintReport} from './report.js?v=original-study-2';
+import {createOriginalClassroom} from './original-classroom.js?v=original-glass-room-1';
 
 const ROLE_DETAILS = Object.freeze({
-  teacher: {label:'Teacher', color:0x9e8bea, seat:[-1.25,1.32,.50]},
-  parent: {label:'Parent', color:0x6ab9c1, seat:[1.25,1.32,.50]},
-  student: {label:'Student', color:0xe5b78a, seat:[0,1.32,1.85]},
+  teacher: {label:'Teacher', color:0x9e8bea, seat:[2.26,1.32,1.10]},
+  parent: {label:'Parent', color:0x6ab9c1, seat:[-.65,1.32,1.10]},
+  student: {label:'Student', color:0xe5b78a, seat:[.8,1.32,2.06]},
 });
 const ROLES = Object.keys(ROLE_DETAILS);
 const FONT = 'Arial, sans-serif';
@@ -60,17 +61,11 @@ export function createMeetingScene(container, {
   container.append(renderer.domElement);
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#07101c');
-  scene.fog = new THREE.Fog('#07101c',14,58);
-  const camera = new THREE.PerspectiveCamera(61,1,.045,85);
+  const camera = new THREE.PerspectiveCamera(61,1,.045,600);
   camera.rotation.order = 'YXZ';
   const rig = new THREE.Group();
   rig.add(camera);
   scene.add(rig);
-  scene.add(new THREE.HemisphereLight(0xcad9f0,0x26313b,1.45));
-  const keyLight = new THREE.DirectionalLight(0xffe5c5,2.0);
-  keyLight.position.set(-1.5,4.2,3.5);
-  scene.add(keyLight);
 
   const material = (color, extra = {}) => {
     const result = new THREE.MeshStandardMaterial({color,roughness:.88,metalness:0,...extra});
@@ -80,81 +75,33 @@ export function createMeetingScene(container, {
     const result = new THREE.MeshBasicMaterial({color,...extra});
     materials.add(result); return result;
   };
-  function mesh(geometry, surface, position, parent = scene) {
+  function mesh(geometry, surface, position, parent=scene) {
     geometries.add(geometry);
-    const object = new THREE.Mesh(geometry,surface);
-    if (position) object.position.set(...position);
-    parent.add(object);
-    return object;
-  }
-  function box(size, position, surface, parent = scene) {
-    return mesh(new THREE.BoxGeometry(...size),surface,position,parent);
+    const object=new THREE.Mesh(geometry,surface);
+    if(position)object.position.set(...position);
+    parent.add(object);return object;
   }
   function canvasTexture(canvas) {
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    texture.minFilter = THREE.LinearFilter;
-    texture.magFilter = THREE.LinearFilter;
-    texture.generateMipmaps = false;
+    const texture=new THREE.CanvasTexture(canvas);
+    texture.colorSpace=THREE.SRGBColorSpace;
+    texture.minFilter=THREE.LinearFilter;
+    texture.magFilter=THREE.LinearFilter;
+    texture.generateMipmaps=false;
     textures.add(texture);
     return texture;
   }
-  function makeTextCanvas(width, height) {
-    const canvas = document.createElement('canvas');
+  function makeTextCanvas(width,height) {
+    const canvas=document.createElement('canvas');
     canvas.width=width;canvas.height=height;
     return canvas;
   }
-  const floorMaterial = material(0x172637);
-  const wallMaterial = material(0x122238);
-  const frameMaterial = material(0x26374e,{roughness:.72,metalness:.12});
-  const chairMaterial = material(0x354457);
-  const warmMaterial = material(0x9b8974);
-  const accentMaterial = basic(0x7d75af);
 
-  // Static opaque geometry: room rendering does not depend on network traffic.
-  box([7.6,.18,8.2],[0,-.09,-.2],floorMaterial);
-  box([7.6,3.9,.18],[0,1.95,-4.05],wallMaterial);
-  box([.16,3.9,8.1],[-3.76,1.95,-.2],wallMaterial);
-  box([.16,3.9,8.1],[3.76,1.95,-.2],wallMaterial);
-  box([7.6,.14,.14],[0,3.82,-3.93],frameMaterial);
-  box([5.9,.025,.025],[0,.16,-3.94],accentMaterial);
-  // The rear of the room opens to a restrained, motionless star field.
-  let seed = 1779;
-  const random = () => { seed=(Math.imul(seed,1664525)+1013904223)>>>0; return seed/4294967296; };
-  const starPositions = new Float32Array(700*3);
-  for (let i=0;i<700;i++) {
-    const theta=random()*Math.PI*2, y=random()*1.7-.6, radius=24+random()*25;
-    starPositions[i*3]=Math.cos(theta)*radius;
-    starPositions[i*3+1]=y*radius;
-    starPositions[i*3+2]=Math.sin(theta)*radius;
-  }
-  const starGeometry = new THREE.BufferGeometry();
-  starGeometry.setAttribute('position',new THREE.BufferAttribute(starPositions,3));
-  const starMaterial = new THREE.PointsMaterial({color:0xa8bad5,size:.045,sizeAttenuation:true,depthWrite:false});
-  geometries.add(starGeometry);materials.add(starMaterial);
-  scene.add(new THREE.Points(starGeometry,starMaterial));
-
-  // An oval table leaves a clear view of both the report and the other seats.
-  const tabletop = mesh(new THREE.CylinderGeometry(1,1,.075,48),warmMaterial,[0,.765,.50]);
-  tabletop.scale.set(1.52,1,.83);
-  const tableLeg = mesh(new THREE.CylinderGeometry(.32,.46,.68,20),frameMaterial,[0,.38,.50]);
-  tableLeg.scale.z=.75;
-
-  function makeChair(key) {
-    const group = new THREE.Group();
-    const [x,,z] = ROLE_DETAILS[key].seat;
-    group.position.set(x,0,z);
-    group.rotation.y=seatHeading(key);
-    scene.add(group);
-    box([.56,.08,.53],[0,.49,.06],chairMaterial,group);
-    box([.56,.49,.075],[0,.77,.30],chairMaterial,group);
-    for (const xLeg of [-.22,.22]) for (const zLeg of [-.14,.25]) {
-      box([.035,.46,.035],[xLeg,.23,zLeg],frameMaterial,group);
-    }
-  }
+  // The exact architectural design of the original Boundless Classroom:
+  // glass walls/ceiling, floating circular stage, original desk and cat teacher.
+  // Only two matching chairs are added beside the original learner chair.
+  const classroom=createOriginalClassroom(scene,renderer,{onError});
 
   function makeAvatar(key) {
-    makeChair(key);
     const details = ROLE_DETAILS[key];
     const group = new THREE.Group();
     group.position.set(...details.seat);
@@ -187,25 +134,27 @@ export function createMeetingScene(container, {
   }
   ROLES.forEach(makeAvatar);
 
+  // Keep the existing four-page report on the original physical whiteboard.
   const reportCanvas=createReportCanvas(0);
   const reportContext=reportCanvas.getContext('2d');
   const reportTexture=canvasTexture(reportCanvas);
-  box([3.77,2.19,.10],[0,1.99,-3.87],frameMaterial);
-  const reportPanel=mesh(new THREE.PlaneGeometry(3.6,2.025),basic(0xffffff,{map:reportTexture,toneMapped:false}),[0,1.99,-3.81]);
+  const reportPanel=mesh(new THREE.PlaneGeometry(4.29,2.41),
+    basic(0xffffff,{map:reportTexture,toneMapped:false}),[0,2.24,-2.724],classroom.room);
+  reportPanel.renderOrder=1;
 
-  // The school lettering is a transparent vector mark, without a backing plate.
+  // Transparent ISP lettering, placed just over the original whiteboard.
   const logoTexture=new THREE.TextureLoader().load(LOGO_URL,loaded=>{
     if(disposed){loaded.dispose();return;}
     loaded.colorSpace=THREE.SRGBColorSpace;
     const aspect=loaded.image.width/loaded.image.height;
-    logoPlate.scale.set(1.56,1.56/aspect,1);
+    logoPlate.scale.set(1.24,1.24/aspect,1);
   },undefined,()=>onError(new Error('The school wordmark could not load. Please refresh.')));
   textures.add(logoTexture);
   logoTexture.colorSpace=THREE.SRGBColorSpace;
-  logoTexture.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());
-  const logoPlate=mesh(new THREE.PlaneGeometry(1,1),basic(0xffffff,{map:logoTexture,toneMapped:false,transparent:true,alphaTest:.02,depthWrite:false}),[0,3.42,-3.84]);
-  logoPlate.scale.set(1.56,.36,1);
-  void reportPanel;
+  const logoPlate=mesh(new THREE.PlaneGeometry(1,1),
+    basic(0xffffff,{map:logoTexture,toneMapped:false,transparent:true,alphaTest:.02,depthWrite:false}),
+    [0,3.67,-2.70],classroom.room);
+  logoPlate.scale.set(1.24,.30,1);
 
   const controlsGroup=new THREE.Group();
   scene.add(controlsGroup);
@@ -348,6 +297,7 @@ export function createMeetingScene(container, {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
     renderer.setSize(width,height,false);camera.aspect=width/height;
     camera.fov=width<640?69:61;camera.updateProjectionMatrix();
+    classroom.resize(height,renderer.getPixelRatio());
   }
   const resizeObserver=typeof ResizeObserver==='function'?new ResizeObserver(resize):null;
   resizeObserver?.observe(container);
@@ -450,6 +400,7 @@ export function createMeetingScene(container, {
       }
       for(const button of buttonMeshes)if(button.visible)paintButton(button,button.userData.enabled,highlighted.has(button));
     }
+    classroom.update(time,dt,reducedMotion.matches,immersive);
     renderer.render(scene,camera);
     if(time-previousPose>=1000/12&&!alignXR){
       previousPose=time;
@@ -467,7 +418,7 @@ export function createMeetingScene(container, {
 
   function dispose(){
     if(disposed)return;
-    disposed=true;resizeObserver?.disconnect();
+    disposed=true;classroom.dispose();resizeObserver?.disconnect();
     renderer.setAnimationLoop(null);
     if(xrSession)void xrSession.end().catch(noOperation);
     eventCleanups.forEach(cleanup=>cleanup());

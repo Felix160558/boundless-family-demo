@@ -14,6 +14,9 @@ export function mountLounge({ container, gallery, onPortrait, onReady, onError }
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.domElement.setAttribute('aria-hidden', 'true');
+  // Hide the unpainted WebGL buffer until the complete first frame is rendered.
+  renderer.domElement.style.opacity = '0';
+  renderer.domElement.style.transition = 'opacity 260ms ease';
   container.append(renderer.domElement);
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#07090e');
@@ -39,7 +42,7 @@ export function mountLounge({ container, gallery, onPortrait, onReady, onError }
   const buttons = [...gallery.querySelectorAll('[data-teacher]')];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const center = new THREE.Vector3(), normal = new THREE.Vector3(), cameraPosition = new THREE.Vector3();
-  let yaw = 0, pitch = 0, drag = null, lastTime = 0, disposed = false;
+  let yaw = 0, pitch = 0, drag = null, lastTime = 0, disposed = false, firstFrameShown = false, paintedFrames = 0;
   lounge.group.userData.requestRender = () => { needsFrame = true; };
 
   function positionPortraits() {
@@ -93,12 +96,18 @@ export function mountLounge({ container, gallery, onPortrait, onReady, onError }
   for (const type of ['pointerup','pointercancel','lostpointercapture']) container.addEventListener(type, up);
   document.addEventListener('keydown', keyboard);
   const observer = new ResizeObserver(resize); observer.observe(container); resize();
-  document.body.dataset.loungeReady = 'true'; onReady?.();
+  // The ready state also moves the portrait hotspots; only flip it after render.
   renderer.setAnimationLoop(time => {
     if (disposed || document.hidden || (!needsFrame && (reduce.matches || time-lastTime < 33))) return;
     const elapsed = Math.min(.05,Math.max(0,(time-lastTime)/1000)); lastTime = time; needsFrame = false;
     sky.update(reduce.matches ? 0 : elapsed);
     lounge.update(time,elapsed,reduce.matches); renderer.render(scene,camera);
+    if (!firstFrameShown && ++paintedFrames >= 2) {
+      firstFrameShown = true;
+      document.body.dataset.loungeReady = 'true';
+      renderer.domElement.style.opacity = '1';
+      onReady?.();
+    }
   });
   return {
     center() { yaw = 0; pitch = 0; pose(); },
