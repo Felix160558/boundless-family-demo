@@ -1,3 +1,15 @@
+# ISP Family Meeting — independent prototype
+
+## Current owner-approved scope · 2026-11-19
+
+This checkout is an independent copy of Felix160558/boundless-classroom at commit b9a793568caf2e45d3e11da1be6f9a58410d4434. Original upstream push is disabled. Never push this work to the original repository or alter its deployment.
+
+The current task overrides the historical source-project requirements below: separate GitHub website; informational learning entrance; original preparation lounge with clickable wall portraits; fictional teachers and local demo bookings; a new lightweight 2–3 participant meeting room; teacher-controlled sample report; provided ISP PROGRAM / SUIS QP logo unchanged in both rooms. Current implementation lives in index.html and family/. See family/AGENTS.md and README.md.
+
+Do not call the original AI gateway. The copied teacher-config.js intentionally has an empty apiOrigin. All new storage keys use the isp_family namespace. GitHub Pages frontend defaults to explicit local preview; actual live communication needs the separate service in server/. Never claim headset, voice, remote-network or performance verification. The user deferred those tests; do only required source syntax/integration checks for now.
+
+## Historical source-project instructions (reference for preserved assets)
+
 # Boundless Classroom public demo
 
 ## Medieval lounge 40 · 2026-11-15
