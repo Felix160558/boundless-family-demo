@@ -1,10 +1,12 @@
-# ISP Family Meeting — independent prototype
+# Boundless Classroom — independent family prototype
 
 ## Current owner-approved scope · 2026-11-19
 
 This checkout is an independent copy of Felix160558/boundless-classroom at commit b9a793568caf2e45d3e11da1be6f9a58410d4434. Original upstream push is disabled. Never push this work to the original repository or alter its deployment.
 
-The current task overrides the historical source-project requirements below: separate GitHub website; informational learning entrance; original preparation lounge with clickable wall portraits; fictional teachers and local demo bookings; a new lightweight 2–3 participant meeting room; teacher-controlled sample report; provided ISP PROGRAM / SUIS QP logo unchanged in both rooms. Current implementation lives in index.html and family/. See family/AGENTS.md and README.md.
+The owner's latest correction takes precedence: restore the original visual design, make only small changes, rename the left entrance from Match to Study, and keep all visible interfaces in English. Preserve the original homepage composition, type, star field and floating classroom. Preserve the original Common Room, wall portraits, lights and quiet overlay. Do not add a Family rebrand, large hero slogans, dashboard cards or a rectangular school-logo tile. Reconstruct only the ISP PROGRAM / SUIS QP lettering as a crisp transparent mark inside the two rooms.
+
+The previously agreed functional scope remains: a separate GitHub website; informational Study entrance; clickable wall portraits; fictional teachers and local demo bookings; a lightweight 2–3 participant meeting room with fixed seats and a teacher-controlled sample report. Current entry uses index.html and family/entry.js with the unmodified original styles.css and scene modules. See family/AGENTS.md and README.md.
 
 Do not call the original AI gateway. The copied teacher-config.js intentionally has an empty apiOrigin. All new storage keys use the isp_family namespace. GitHub Pages frontend defaults to explicit local preview; actual live communication needs the separate service in server/. Never claim headset, voice, remote-network or performance verification. The user deferred those tests; do only required source syntax/integration checks for now.
 

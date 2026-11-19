@@ -1,52 +1,60 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#08101d">
-  <meta name="description" content="ISP 家庭会谈演示：从准备室墙上的老师画像开始，预约一次老师、家长与学生共同参与的沟通。">
-  <meta name="referrer" content="no-referrer">
-  <title>ISP 家庭会谈 · Boundless Family</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2308101d'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-size='45' fill='%238e7cff'%3E∞%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="./family/home.css?v=family-1">
-  <script type="module" src="./family/home.js?v=family-1"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07090e">
+  <meta name="description" content="Boundless Classroom · Space Version. A quiet place to learn, beyond boundaries. Love, Share and Peace.">
+  <title>Boundless Classroom · Space Version</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23080c12'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-size='46' fill='%23f3f0e8'%3E∞%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css?v=medieval-lounge-40">
+  <link rel="preload" as="fetch" href="./cat-teacher.glb?v=refined-cat-22" crossorigin="anonymous" fetchpriority="low">
+  <link rel="modulepreload" href="./space-scene.js?v=medieval-lounge-40">
+  <link rel="modulepreload" href="./three.module.min.js">
+  <link rel="modulepreload" href="./meshopt_decoder.mjs">
+  <script type="module" src="./family/entry.js?v=original-study-2"></script>
 </head>
-<body>
-  <div class="cosmos" aria-hidden="true"></div>
+<body data-mode="home">
+  <div class="cosmos-fallback" aria-hidden="true"><div class="fallback-platform"></div></div>
+  <div id="universe" role="img" aria-label="The original three-dimensional classroom floating in stardust, with a whiteboard, desk, chair, and the cat teacher."></div>
+  <div class="grain" aria-hidden="true"></div>
   <header class="site-header">
-    <a class="isp-brand" href="./" aria-label="ISP 家庭会谈首页"><img src="./family/assets/isp-program-logo.png" alt="ISP PROGRAM / SUIS QP" width="206" height="70"></a>
-    <span class="project-sign">BOUNDLESS <span>FAMILY</span></span>
-    <a class="meeting-entry" href="./family/meeting.html?role=teacher">进入会谈</a>
+    <div class="wordmark"><span class="brand-mark" aria-hidden="true">∞</span><span>BOUNDLESS<span class="brand-sub">CLASSROOM</span></span></div>
+    <div class="header-actions">
+      <button class="vr-entry" id="enter-vr"><span class="vr-glyph" aria-hidden="true"></span> Enter the VR <span aria-hidden="true">↗</span></button>
+    </div>
   </header>
-  <main class="home">
-    <div class="home-heading">
-      <p class="eyebrow">A SPACE TO UNDERSTAND</p>
-      <h1>一起，<br class="mobile-break">看见成长。</h1>
-      <p class="home-description">让老师的观察、家长的期待和孩子的声音，<br>在同一个空间里相遇。</p>
-    </div>
-    <div id="home-scene" class="home-scene" aria-hidden="true"><div class="scene-fallback"></div></div>
-    <div class="entry learning-entry">
-      <span class="entry-kicker">LEARN TOGETHER</span>
-      <button id="open-learning" class="entry-title" type="button">学习区</button>
-      <p>属于家长，也属于学生。<br><span>第一版保留入口与介绍</span></p>
-    </div>
-    <div class="entry reservation-entry">
-      <span class="entry-kicker">MAKE TIME TO CONNECT</span>
-      <a class="entry-title" href="./family/reservation.html">预约区</a>
-      <p>从墙上的一幅画像，<br>开始一次有准备的沟通。</p>
-    </div>
-    <p class="scene-caption">老师 · 家长 · 学生 <span>同一张桌子，同一个方向</span></p>
+
+  <main>
+    <section class="home" id="home-view" aria-label="Learning entrances">
+      <div class="home-heading">
+        <p class="eyebrow"><span class="tiny-orbit" aria-hidden="true"></span> ROOM 001 <span class="eyebrow-divider">/</span> SPACE VERSION</p>
+        <h1>Beyond boundaries.</h1>
+        <p class="home-subtitle">Let curiosity take you further.</p>
+      </div>
+      <div class="entry-anchor match-anchor">
+        <p class="entry-index">01 <span>LEARN IN THE MOMENT</span></p>
+        <button class="entry-button" id="open-study"><span>Study</span></button>
+        <div class="entry-line" aria-hidden="true"></div>
+      </div>
+      <div class="entry-anchor reservation-anchor">
+        <p class="entry-index">02 <span>MAKE TIME FOR CURIOSITY</span></p>
+        <a class="entry-button" id="open-book" href="./family/reservation.html"><span>Reservation</span></a>
+        <div class="entry-line" aria-hidden="true"></div>
+      </div>
+      <div class="stage-coordinate" aria-hidden="true"><i></i> THE FIRST CLASSROOM <span>001</span></div>
+      <div class="home-footer"><span class="edition"><i></i> AN OPEN LEARNING EXPERIMENT</span><span>Love, Share and Peace.</span><span class="footer-right">FREE TO LEARN. FREE TO SHARE.</span></div>
+    </section>
   </main>
-  <footer class="home-footer"><span>独立演示版本 <b>·</b> Quest / WebXR 原型</span><span>Love, Share and Peace.</span><span>演示老师 · 演示预约 · 示例报告</span></footer>
-  <dialog id="learning-dialog" aria-labelledby="learning-title">
-    <button class="close-dialog" type="button" id="close-learning" aria-label="关闭学习区介绍">×</button>
-    <p class="eyebrow">LEARNING SPACE</p>
-    <h2 id="learning-title">学习，从理解彼此开始。</h2>
-    <p class="dialog-intro">这里将成为家长与学生共同的学习入口。</p>
-    <div class="learning-outline"><div><span>学生</span><p>看清学习目标，积累自己的收获与问题。</p></div><div><span>家长</span><p>了解孩子的学习，也发现属于自己的学习机会。</p></div><div><span>一起</span><p>带着具体的问题，与老师讨论下一步。</p></div></div>
-    <p class="scope-note">当前版本先完成预约与会谈，学习内容尚未开放。</p>
-    <a class="primary" href="./family/reservation.html">去准备室认识老师</a>
+
+  <div class="loading-state" id="scene-loading" role="status"><span></span> Lighting the first classroom</div>
+  <p class="fallback-note" id="fallback-note" hidden>The 3D classroom is unavailable. Study and Reservation remain accessible.</p>
+
+  <dialog id="study-dialog" aria-labelledby="study-title">
+    <div class="dialog-top"><span class="eyebrow">BOUNDLESS / STUDY</span><button type="button" class="close-button" id="close-study" aria-label="Close Study">×</button></div>
+    <div class="booking-intro"><h2 id="study-title">Study</h2><p>A shared learning space for students and parents.</p></div>
+    <p class="booking-notice">Learning content is not yet available. This first version focuses on reservations and conversations with teachers.</p>
   </dialog>
-  <noscript><p class="noscript-note">请开启 JavaScript 以查看三维空间和预约流程。<a href="./family/reservation.html">前往准备室</a></p></noscript>
+  <noscript><div class="noscript-note">Enable JavaScript to view the 3D classroom and open Study. <a href="./family/reservation.html">Visit Reservation</a>.</div></noscript>
 </body>
 </html>
