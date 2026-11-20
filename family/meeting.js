@@ -1,5 +1,5 @@
 import { familyConfig } from './config.js';
-import { createMeetingScene } from './meeting-scene.js?v=original-study-2';
+import { createMeetingScene } from './meeting-scene.js?v=meeting-no-seat-1';
 import { REPORT_PAGES, REPORT_TITLE } from './report.js?v=original-study-2';
 import { createRoomClient } from './room-client.js?v=original-study-2';
 
@@ -9,7 +9,7 @@ const roleNames = { teacher: 'Teacher', parent: 'Parent', student: 'Student' };
 const roleLetters = { teacher: 'T', parent: 'P', student: 'S' };
 const url = new URL(location.href);
 const fragment = new URLSearchParams(url.hash.slice(1));
-let role = roles.includes(url.searchParams.get('role')) ? url.searchParams.get('role') : 'teacher';
+const role = roles.includes(url.searchParams.get('role')) ? url.searchParams.get('role') : 'teacher';
 let ticket = fragment.get('invite') || '';
 let roomId = /^[A-Za-z0-9_-]{6,64}$/.test(url.searchParams.get('room') || '') ? url.searchParams.get('room') : createDemoCode();
 const teacherId = /^teacher-[123]$/.test(url.searchParams.get('teacher') || '') ? url.searchParams.get('teacher') : 'teacher-1';
@@ -215,24 +215,17 @@ try {
   $('enter-vr').disabled = true;
 }
 
-function chooseRole(value) {
-  if (!roles.includes(value) || entered) return;
-  role = value;
+// Reservation and invitation links already identify the role. A participant
+// enters directly with that role and its fixed seat; no seat chooser is shown.
+function initializeRole() {
   document.body.dataset.role = role;
-  const input = document.querySelector(`input[name="role"][value="${role}"]`);
-  input.checked = true;
   scene?.setRole(role);
   $('display-name').placeholder = role === 'parent' ? 'e.g. Alex (parent)' : role === 'student' ? 'e.g. Alex' : 'e.g. Teacher Chen';
   $('enter-room').textContent = serviceReady ? (role === 'teacher' && !ticket ? 'Create room' : 'Join room') : 'Enter preview';
   $('entry-note').textContent = serviceReady ? 'Mic starts only when enabled · Fictional sample report' : 'Local preview · Live service not connected';
   renderReport(page);
 }
-
-document.querySelectorAll('input[name="role"]').forEach(input => {
-  input.addEventListener('change', () => chooseRole(input.value));
-  if (ticket && input.value !== role) input.disabled = true;
-});
-chooseRole(role);
+initializeRole();
 $('report-title').textContent = REPORT_TITLE;
 $('room-code').textContent = roomId;
 if (slot && Number.isFinite(Date.parse(slot))) {
