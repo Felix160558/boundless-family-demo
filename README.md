@@ -8,7 +8,7 @@ The current version restores the original homepage: **Beyond boundaries.**, the 
 
 - The left entrance changes from **Match** to **Study**. It opens a short explanation of the future learning area.
 - **Reservation** opens the original Common Room with its original modeled interior and clickable wall portraits.
-- **Enter the VR** opens the separate fixed-seat meeting prototype.
+- **Enter the VR** opens the separate fixed-seat meeting prototype, immediately showing the original glass classroom. No initial seat picker, Enter Room screen, or large participant panel is displayed.
 - All visible interface, teacher-profile, report and status text is English.
 - The ISP PROGRAM / SUIS QP lettering is reconstructed as a transparent, scalable vector mark inside the preparation and meeting rooms. No rectangular image tile or backing plate is used.
 
@@ -18,7 +18,7 @@ The original homepage stylesheet and scene assets are reused, without a new visu
 
 Teachers, time slots and the four-page learning report are fictional examples. Bookings are stored only in the current browser and do not notify a teacher or reserve a real slot.
 
-The meeting prototype has three fixed roles, simple participant representations, one shared report and a WebXR entry. The teacher controls report pages. Empty seats are clearly waiting, rather than simulated as connected people.
+The meeting prototype has three fixed roles, simple participant representations, four widescreen English ISP family-learning slides on the original whiteboard, and a WebXR entry. The teacher controls slide changes. The seat is derived from the reservation/invitation URL, and the experience opens directly into the classroom with a minimal control strip. Empty seats are clearly waiting, rather than simulated as connected people. The slides use anonymized themes from the user's institutional reference decks; no private student or staff lists are published.
 
 ## GitHub Pages
 
