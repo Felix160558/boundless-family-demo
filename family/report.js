@@ -1,123 +1,188 @@
-export const REPORT_TITLE = 'Learning report';
+// Public, fictional slides inspired by the supplied ISP/AA meeting materials.
+// Do not put student rosters, staff assignments or private school records
+// from the reference decks into this public GitHub Pages prototype.
+export const REPORT_TITLE = 'Family learning conversation';
 
-// All names, observations and next steps below are fictional demonstration data.
 export const REPORT_PAGES = Object.freeze([
   {
-    eyebrow: 'DEMO LEARNING REPORT · 01',
-    title: 'This week in learning',
-    subtitle: 'Sample student: Alex · Chemistry',
+    type: 'compass',
+    eyebrow: '01  /  THE LEARNER AT THE CENTRE',
+    title: 'One learner. Three perspectives.',
+    subtitle: 'A meeting that connects academic progress with personal growth.',
     sections: [
-      {title: 'Current focus', body: 'Electrode reactions and electron transfer: understand, then explain.'},
-      {title: 'Progress so far', body: 'Identifies oxidation and reduction in basic examples and explains why.'},
-      {title: 'Next area to develop', body: 'Build a consistent check for independently written half-equations.'},
+      {title:'Academic pathways',body:'Understand the learning journey, choices and current strengths.'},
+      {title:'Guidance and goals',body:'Turn broad ambitions into a practical direction.'},
+      {title:'Habits and support',body:'Build confidence, healthy routines and room to explore.'},
     ],
-    footer: 'Fictional example. No real student records or assessment.',
+    footer:'A shared view makes the next conversation more useful.',
   },
   {
-    eyebrow: 'DEMO LEARNING REPORT · 02',
-    title: 'Understanding the difficulty',
-    subtitle: 'Three perspectives: student, parent and teacher.',
+    type: 'pathway',
+    eyebrow: '02  /  LEARNING PATHWAYS',
+    title: 'A four-year view',
+    subtitle: 'Explore early. Make informed choices. Review direction over time.',
     sections: [
-      {title: 'Student perspective', body: 'I understand in class, but sometimes do not know what to check first.'},
-      {title: 'Teacher observation', body: 'Use a fixed order: check atoms first, then check charge.'},
-      {title: 'Support at home', body: 'Allow time for the student to explain each check in their own words.'},
+      {title:'G9  ·  Explore',body:'Interests and strong foundations'},
+      {title:'G10  ·  Build',body:'Study habits and pathway options'},
+      {title:'G11  ·  Focus',body:'Subjects, projects and evidence'},
+      {title:'G12  ·  Prepare',body:'Applications and next destinations'},
     ],
-    footer: 'Fictional meeting material for this shared report demo.',
+    footer:'Pathways vary; IGCSE foundations and A Level / IB options are examples.',
   },
   {
-    eyebrow: 'DEMO LEARNING REPORT · 03',
-    title: 'Goals for next week',
-    subtitle: 'Small goals, clear actions.',
-    sections: [
-      {title: 'Student', body: 'Complete three basic exercises and show the checks beside each answer.'},
-      {title: 'Teacher', body: 'Give brief feedback, then check understanding with a new question.'},
-      {title: 'Parent', body: 'Set aside ten minutes to listen, review progress and discuss support.'},
+    type: 'balance',
+    eyebrow: '03  /  WHOLE-PERSON EDUCATION',
+    title: 'Learning happens everywhere',
+    subtitle:'An illustrative 5 : 3 : 2 conversation model.',
+    sections:[
+      {title:'In class',body:'Subjects, understanding and English literacy.'},
+      {title:'Beyond class',body:'Projects, exploration and shared experiences.'},
+      {title:'At home',body:'Curiosity, reflection and family support.'},
     ],
-    footer: 'Demo plan only. No real teacher has been notified.',
+    footer:'5 : 3 : 2 is a discussion model, not a prescribed schedule.',
   },
   {
-    eyebrow: 'DEMO LEARNING REPORT · 04',
-    title: 'Agreeing on the next step',
-    subtitle: 'Leave with a clear, shared plan.',
-    sections: [
-      {title: 'First action', body: 'Make a short checklist for conserving atoms and charge.'},
-      {title: 'Next review', body: 'Bring one difficult question and one example of progress.'},
-      {title: 'Shared agreement', body: 'The teacher guides, the student shares needs, and the parent supports.'},
+    type: 'agreement',
+    eyebrow: '04  /  MOVING FORWARD TOGETHER',
+    title: 'Leave with one clear next step',
+    subtitle:'Make the conversation specific, kind and achievable.',
+    sections:[
+      {title:'Teacher',body:'Explain progress clearly. Recommend one next action.'},
+      {title:'Student',body:'Share one challenge. Choose a small goal to try.'},
+      {title:'Parent',body:'Listen with care. Support one helpful routine.'},
     ],
-    footer: 'End of demo report · Pages are controlled by the teacher.',
+    footer:'One action  •  One owner  •  One agreed check-in.',
   },
-].map(page => Object.freeze({...page, sections:Object.freeze(page.sections.map(section=>Object.freeze(section)))})));
+].map(page=>Object.freeze({...page,sections:Object.freeze(page.sections.map(part=>Object.freeze(part)))})));
 
-const FONT = 'Arial, sans-serif';
+const W=1600, H=720;
+const COLORS={
+  navy:'#17417f',
+  cobalt:'#2459a4',
+  purple:'#8062d7',
+  ink:'#1c2c47',
+  muted:'#65758b',
+  paper:'#f8fafc',
+  paleBlue:'#ebf3fc',
+  palePurple:'#f0edfc',
+  paleTeal:'#e6f4f1',
+  teal:'#428f89',
+  line:'#dbe4ee',
+};
+const accents=[COLORS.cobalt,COLORS.purple,COLORS.teal];
 
-function wrapText(context, text, width) {
-  const lines = [];
-  for (const paragraph of String(text).split('\n')) {
-    let line = '';
-    for (const word of paragraph.trim().split(/\s+/)) {
-      const next = line ? `${line} ${word}` : word;
-      if (line && context.measureText(next).width > width) {
-        lines.push(line);
-        line = word;
-      } else line = next;
-    }
-    lines.push(line);
-  }
-  return lines;
+function roundedPath(ctx,x,y,w,h,r=18){
+  const d=Math.min(r,w/2,h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+d,y);ctx.lineTo(x+w-d,y);ctx.quadraticCurveTo(x+w,y,x+w,y+d);
+  ctx.lineTo(x+w,y+h-d);ctx.quadraticCurveTo(x+w,y+h,x+w-d,y+h);
+  ctx.lineTo(x+d,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-d);
+  ctx.lineTo(x,y+d);ctx.quadraticCurveTo(x,y,x+d,y);ctx.closePath();
 }
-
-export function paintReport(context, pageIndex = 0, width = 1600, height = 900) {
-  const index = Math.max(0, Math.min(REPORT_PAGES.length - 1, Math.trunc(Number(pageIndex) || 0)));
-  const page = REPORT_PAGES[index];
-  context.save();
-  context.setTransform(width / 1600, 0, 0, height / 900, 0, 0);
-  context.fillStyle = '#eaf0f2';
-  context.fillRect(0, 0, 1600, 900);
-  context.fillStyle = '#7267c7';
-  context.fillRect(0, 0, 13, 900);
-  context.textBaseline = 'alphabetic';
-  context.textAlign = 'left';
-  context.fillStyle = '#626884';
-  context.font = `500 30px ${FONT}`;
-  context.fillText(page.eyebrow, 91, 76);
-  context.fillStyle = '#172538';
-  context.font = `600 66px ${FONT}`;
-  context.fillText(page.title, 87, 163);
-  context.fillStyle = '#566578';
-  context.font = `400 35px ${FONT}`;
-  context.fillText(page.subtitle, 91, 221);
-  context.fillStyle = '#d4dce1';
-  context.fillRect(91, 259, 1418, 2);
-
-  page.sections.forEach((section, sectionIndex) => {
-    const y = 324 + sectionIndex * 152;
-    context.fillStyle = '#655cb3';
-    context.font = `600 37px ${FONT}`;
-    context.fillText(section.title, 91, y);
-    context.fillStyle = '#233449';
-    context.font = `400 42px ${FONT}`;
-    const lines = wrapText(context, section.body, 1400);
-    lines.slice(0, 2).forEach((line, lineIndex) => context.fillText(line, 91, y + 59 + lineIndex * 52));
+function roundedFill(ctx,x,y,w,h,r,color){
+  roundedPath(ctx,x,y,w,h,r);ctx.fillStyle=color;ctx.fill();
+}
+function text(ctx,content,x,y,size=30,color=COLORS.ink,weight=400,align='left'){
+  ctx.fillStyle=color;ctx.font=weight+' '+size+'px Arial, sans-serif';
+  ctx.textAlign=align;ctx.textBaseline='alphabetic';ctx.fillText(content,x,y);
+}
+function wrap(ctx,content,x,y,maxWidth,size=29,leading=41,maxLines=3,color=COLORS.muted){
+  ctx.font='400 '+size+'px Arial, sans-serif';
+  const words=String(content).split(/\s+/),lines=[];
+  let current='';
+  for(const word of words){
+    const candidate=current?current+' '+word:word;
+    if(current&&ctx.measureText(candidate).width>maxWidth){lines.push(current);current=word;}
+    else current=candidate;
+  }
+  if(current)lines.push(current);
+  for(let i=0;i<Math.min(maxLines,lines.length);i++){
+    text(ctx,lines[i],x,y+i*leading,size,color);
+  }
+}
+function base(ctx,page,index){
+  ctx.fillStyle=COLORS.paper;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=COLORS.navy;ctx.fillRect(0,0,W,102);
+  ctx.fillStyle=COLORS.purple;ctx.fillRect(0,0,13,102);
+  text(ctx,'ISP',76,74,60,'#a88eff',800);
+  text(ctx,'PROGRAM  /  SUIS QP',215,64,26,'#f0f2fc',700);
+  text(ctx,'FAMILY LEARNING CONVERSATION',W-82,65,21,'#dfe9fa',500,'right');
+  text(ctx,page.eyebrow,81,150,21,COLORS.cobalt,700);
+  text(ctx,page.title,78,218,68,COLORS.ink,700);
+  text(ctx,page.subtitle,81,269,29,COLORS.muted,400);
+  ctx.strokeStyle=COLORS.line;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(82,651);ctx.lineTo(W-82,651);ctx.stroke();
+  text(ctx,page.footer,82,686,24,COLORS.muted,400);
+  text(ctx,String(index+1).padStart(2,'0')+' / 04',W-82,686,22,COLORS.cobalt,700,'right');
+}
+function card(ctx,{x,y,w,h,index,heading,body,accent,pale,number}){
+  roundedFill(ctx,x,y,w,h,19,'#ffffff');
+  ctx.strokeStyle=COLORS.line;ctx.lineWidth=2;roundedPath(ctx,x,y,w,h,19);ctx.stroke();
+  roundedFill(ctx,x+22,y+23,74,61,12,pale);
+  text(ctx,number||String(index+1).padStart(2,'0'),x+59,y+65,32,accent,800,'center');
+  text(ctx,heading,x+26,y+146,34,COLORS.ink,700);
+  wrap(ctx,body,x+26,y+177,w-55,28,40,3,COLORS.muted);
+  roundedFill(ctx,x+26,y+h-31,w-52,5,2,accent);
+}
+function compass(ctx,page){
+  const x0=79,gap=36,w=(W-158-gap*2)/3;
+  page.sections.forEach((s,i)=>card(ctx,{x:x0+i*(w+gap),y:310,w,h:306,index:i,heading:s.title,body:s.body,accent:accents[i],pale:[COLORS.paleBlue,COLORS.palePurple,COLORS.paleTeal][i]}));
+}
+function pathway(ctx,page){
+  const x0=78,gap=24,w=(W-156-gap*3)/4;
+  page.sections.forEach((s,i)=>{
+    const x=x0+i*(w+gap),y=307,h=307;
+    roundedFill(ctx,x,y,w,h,16,'#ffffff');
+    ctx.strokeStyle=COLORS.line;ctx.lineWidth=2;roundedPath(ctx,x,y,w,h,16);ctx.stroke();
+    roundedFill(ctx,x+20,y+20,w-40,96,12,i===1||i===3?COLORS.palePurple:COLORS.paleBlue);
+    const grade=['G9','G10','G11','G12'][i];
+    text(ctx,grade,x+37,y+85,68,i===1||i===3?COLORS.purple:COLORS.cobalt,800);
+    text(ctx,s.title.split('·')[1].trim(),x+25,y+172,38,COLORS.ink,700);
+    wrap(ctx,s.body,x+25,y+225,w-49,28,41,2,COLORS.muted);
   });
-
-  context.fillStyle = '#d4dce1';
-  context.fillRect(91, 802, 1418, 2);
-  context.fillStyle = '#647285';
-  context.font = `400 28px ${FONT}`;
-  context.fillText(page.footer, 91, 855);
-  context.textAlign = 'right';
-  context.font = `500 30px ${FONT}`;
-  context.fillText(`${index + 1} / ${REPORT_PAGES.length}`, 1507, 855);
+}
+function balance(ctx,page){
+  const x=79,y=314,w=W-158,h=174;
+  const colors=[COLORS.cobalt,COLORS.purple,COLORS.teal],ratios=[.5,.3,.2],figures=['5','3','2'],captions=['IN CLASS','BEYOND CLASS','AT HOME'];
+  roundedPath(ctx,x,y,w,h,18);ctx.save();ctx.clip();
+  let pos=x;
+  for(let i=0;i<ratios.length;i++){
+    const seg=w*ratios[i];
+    ctx.fillStyle=colors[i];ctx.fillRect(pos,y,seg,h);
+    text(ctx,figures[i],pos+seg/2,y+109,94,'#ffffff',800,'center');
+    text(ctx,captions[i],pos+seg/2,y+145,23,'#f3f5ff',700,'center');
+    pos+=seg;
+  }
+  ctx.restore();
+  const col=(W-158-2*33)/3;
+  page.sections.forEach((s,i)=>{
+    const left=79+i*(col+33);
+    text(ctx,s.title,left,552,30,colors[i],700);
+    wrap(ctx,s.body,left,597,col-18,24,32,2,COLORS.muted);
+  });
+}
+function agreement(ctx,page){
+  const x0=79,gap=36,w=(W-158-gap*2)/3;
+  page.sections.forEach((s,i)=>card(ctx,{x:x0+i*(w+gap),y:310,w,h:306,index:i,heading:s.title,body:s.body,accent:accents[i],pale:[COLORS.paleBlue,COLORS.palePurple,COLORS.paleTeal][i],number:['T','S','P'][i]}));
+}
+export function paintReport(context,pageIndex=0,width=1600,height=720){
+  const index=Math.max(0,Math.min(REPORT_PAGES.length-1,Math.trunc(Number(pageIndex)||0)));
+  const page=REPORT_PAGES[index];
+  context.save();
+  context.setTransform(width/W,0,0,height/H,0,0);
+  context.clearRect(0,0,W,H);
+  base(context,page,index);
+  if(page.type==='compass')compass(context,page);
+  else if(page.type==='pathway')pathway(context,page);
+  else if(page.type==='balance')balance(context,page);
+  else agreement(context,page);
   context.restore();
   return page;
 }
-
-export function createReportCanvas(pageIndex = 0, {width = 1600, height = 900} = {}) {
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  const context = canvas.getContext('2d');
-  if (!context) throw new Error('This browser cannot draw the shared report.');
-  paintReport(context, pageIndex, width, height);
+export function createReportCanvas(pageIndex=0,{width=1600,height=720}={}){
+  const canvas=document.createElement('canvas');
+  canvas.width=width;canvas.height=height;
+  const context=canvas.getContext('2d');
+  if(!context)throw new Error('This browser cannot draw the family meeting slides.');
+  paintReport(context,pageIndex,width,height);
   return canvas;
 }

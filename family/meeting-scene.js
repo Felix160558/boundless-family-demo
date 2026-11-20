@@ -1,5 +1,5 @@
 import * as THREE from '../three.module.min.js';
-import {REPORT_PAGES, createReportCanvas, paintReport} from './report.js?v=original-study-2';
+import {REPORT_PAGES, createReportCanvas, paintReport} from './report.js?v=family-slides-4';
 import {createOriginalClassroom} from './original-classroom.js?v=meeting-no-cat-1';
 
 const ROLE_DETAILS = Object.freeze({
@@ -134,11 +134,11 @@ export function createMeetingScene(container, {
   }
   ROLES.forEach(makeAvatar);
 
-  // Keep the existing four-page report on the original physical whiteboard.
+  // Four 1600×720 wide-format ISP meeting slides, inset precisely in the original board.
   const reportCanvas=createReportCanvas(0);
   const reportContext=reportCanvas.getContext('2d');
   const reportTexture=canvasTexture(reportCanvas);
-  const reportPanel=mesh(new THREE.PlaneGeometry(4.29,2.41),
+  const reportPanel=mesh(new THREE.PlaneGeometry(5.10,2.295),
     basic(0xffffff,{map:reportTexture,toneMapped:false}),[0,2.24,-2.724],classroom.room);
   reportPanel.renderOrder=1;
 
