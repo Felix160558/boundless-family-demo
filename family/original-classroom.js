@@ -1,12 +1,11 @@
 import * as THREE from '../three.module.min.js';
 import { createSpaceSky } from '../space-sky.js?v=medieval-lounge-40';
-import { createCatTeacher } from '../cat-teacher.js?v=teacher-presence-26';
 
 // Deliberately reuses the architectural dimensions, materials, glass enclosure,
 // desk and rounded-chair geometry of the original Boundless Classroom.
 // The existing student's chair stays at (0.8, 2.06). Two matching chairs are
 // added beside the same desk; no new meeting-room architectural theme.
-export function createOriginalClassroom(scene, renderer, { onError = () => {} } = {}) {
+export function createOriginalClassroom(scene, renderer) {
   const room = new THREE.Group();
   room.name = 'Original Boundless Classroom · three chairs';
   scene.add(room);
@@ -208,25 +207,15 @@ export function createOriginalClassroom(scene, renderer, { onError = () => {} } 
   chair(-.65,1.1,-Math.PI/2);     // Added parent chair beside the desk.
   chair(2.26,1.1,Math.PI/2);      // Added teacher chair opposite it.
 
-  // Preserve the original cat teacher, asynchronously loaded just as on the
-  // homepage. The new meeting room does not call any paid AI gateway.
-  const teacher=createCatTeacher(()=>{});
-  const teacherSpot=new THREE.Group();
-  teacherSpot.position.set(-2.55,0,.35);
-  teacher.group.position.set(0,.1,0);
-  teacher.group.rotation.y=.25;
-  teacherSpot.add(teacher.group);
-  room.add(teacherSpot);
-  let disposed=false;
-  void Promise.resolve().then(()=>{ if(!disposed) return teacher.load(); }).catch(onError);
+  // The meeting space intentionally has no AI cat teacher. The original
+  // homepage cat asset remains unchanged and available outside this room.
   const sky=createSpaceSky(scene,{compact:true});
   return {
-    room,sky,teacher,
-    update(time,dt,reducedMotion,xr) {
+    room,sky,
+    update(_time,dt,reducedMotion) {
       sky.update(reducedMotion?0:dt);
-      teacher.update(dt,{reducedMotion,xr,time:time/1000});
     },
     resize(height,pixelRatio) {sky.resize(height,pixelRatio);},
-    dispose() {disposed=true;}
+    dispose() {}
   };
 }
