@@ -89,7 +89,7 @@ function updateParticipants() {
 function updateConnection() {
   document.body.dataset.connected = String(serviceReady && connection.phase === 'connected');
   let message;
-  if (!serviceReady) message = 'Local preview · Live service not connected';
+  if (!serviceReady) message = 'Local preview · No live connection';
   else if (!entered && !entering) message = 'Preparing the meeting…';
   else if (connection.phase === 'connected') {
     const count = participants.filter(person => person.connected).length;
@@ -172,7 +172,7 @@ try {
 // All roles and seats are assigned by Reservation/invitation URLs.
 document.body.dataset.role=role;
 scene?.setRole(role);
-$('invite-people').hidden = serviceReady && role !== 'teacher';
+$('invite-people').hidden = !serviceReady || role !== 'teacher';
 
 async function enterRoom() {
   if(entered||entering)return;
@@ -201,8 +201,7 @@ async function enterRoom() {
     markRoomURL();
     updateParticipants();
     renderReport(page);
-    $('invite-people').hidden=serviceReady && (!invitations || role!=='teacher');
-    if(!serviceReady)$('invite-people').textContent='Share';
+    $('invite-people').hidden=!serviceReady || !invitations || role!=='teacher';
   }catch(error){
     const message=explain(error);
     connection={...connection,phase:'error',message};
