@@ -1,6 +1,6 @@
 import * as THREE from '../three.module.min.js';
 import {REPORT_PAGES, createReportCanvas, paintReport} from './report.js?v=original-study-2';
-import {createOriginalClassroom} from './original-classroom.js?v=original-glass-room-1';
+import {createOriginalClassroom} from './original-classroom.js?v=meeting-no-cat-1';
 
 const ROLE_DETAILS = Object.freeze({
   teacher: {label:'Teacher', color:0x9e8bea, seat:[2.26,1.32,1.10]},
@@ -99,7 +99,7 @@ export function createMeetingScene(container, {
   // The exact architectural design of the original Boundless Classroom:
   // glass walls/ceiling, floating circular stage, original desk and cat teacher.
   // Only two matching chairs are added beside the original learner chair.
-  const classroom=createOriginalClassroom(scene,renderer,{onError});
+  const classroom=createOriginalClassroom(scene,renderer);
 
   function makeAvatar(key) {
     const details = ROLE_DETAILS[key];
