@@ -120,7 +120,7 @@ function card(ctx,{x,y,w,h,index,heading,body,accent,pale,number}){
   roundedFill(ctx,x+22,y+23,74,61,12,pale);
   text(ctx,number||String(index+1).padStart(2,'0'),x+59,y+65,32,accent,800,'center');
   text(ctx,heading,x+26,y+146,34,COLORS.ink,700);
-  wrap(ctx,body,x+26,y+201,w-55,28,42,3,COLORS.muted);
+  wrap(ctx,body,x+26,y+177,w-55,28,40,3,COLORS.muted);
   roundedFill(ctx,x+26,y+h-31,w-52,5,2,accent);
 }
 function compass(ctx,page){
