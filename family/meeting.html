@@ -8,8 +8,8 @@
   <meta name="description" content="A meeting space for teachers, parents and students with a shared sample learning report.">
   <title>Meeting room · Boundless Classroom</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23080c16'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-size='46' fill='%239581ff'%3E∞%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="./meeting.css?v=original-study-2">
-  <script type="module" src="./meeting.js?v=original-study-2"></script>
+  <link rel="stylesheet" href="./meeting.css?v=meeting-no-seat-1">
+  <script type="module" src="./meeting.js?v=meeting-no-seat-1"></script>
 </head>
 <body>
   <div id="meeting-scene" class="scene" aria-label="A three-seat meeting space with a shared learning report"></div>
@@ -22,14 +22,9 @@
   <main class="meeting-layout">
     <section class="arrival glass" id="arrival" aria-labelledby="arrival-title">
       <p class="eyebrow">MEETING ROOM</p>
-      <h1 id="arrival-title">Take a seat.</h1>
-      <p class="arrival-copy">Choose your seat to review the sample report.</p>
+      <h1 id="arrival-title">Welcome to the room.</h1>
+      <p class="arrival-copy">Review the shared learning report together.</p>
       <p class="appointment-line" id="appointment-line"></p>
-      <fieldset id="role-fieldset"><legend>Choose your role</legend><div class="role-options">
-        <label><input type="radio" name="role" value="teacher" checked><span><i class="role-symbol teacher" aria-hidden="true">T</i>Teacher</span></label>
-        <label><input type="radio" name="role" value="parent"><span><i class="role-symbol parent" aria-hidden="true">P</i>Parent</span></label>
-        <label><input type="radio" name="role" value="student"><span><i class="role-symbol student" aria-hidden="true">S</i>Student</span></label>
-      </div></fieldset>
       <label class="name-label" for="display-name">Display name <span>Optional</span></label><input id="display-name" class="text-input" maxlength="24" autocomplete="off" placeholder="e.g. Alex (parent)">
       <button class="primary-button enter-button" id="enter-room" type="button">Enter room</button>
       <p class="entry-note" id="entry-note">Sample report · 2–3 person meeting demo</p>
