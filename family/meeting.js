@@ -90,6 +90,7 @@ function updateConnection() {
   document.body.dataset.connected = String(serviceReady && connection.phase === 'connected');
   let message;
   if (!serviceReady) message = 'Local preview · No live connection';
+  else if (connection.phase === 'error') message = connection.message || 'Could not connect to the room';
   else if (!entered && !entering) message = 'Preparing the meeting…';
   else if (connection.phase === 'connected') {
     const count = participants.filter(person => person.connected).length;
